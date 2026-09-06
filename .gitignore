@@ -20,3 +20,6 @@ docs/demos/.screen-grab-pending.edn*
 
 # clojure-lsp's analysis cache, created by any clojure-lsp invocation.
 .lsp/
+
+# docs-engine build output
+_site/
