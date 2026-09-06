@@ -12,7 +12,7 @@ body:
 
         Adding an example touches four places and is deliberately mechanical -
         see [the four
-        touchpoints](https://github.com/burinc/b12n-raylib-jnk/blob/main/docs/guide/porting-workflow.md#3-register-in-all-four-places-same-commit).
+        touchpoints](https://github.com/b12n-oss/raylib-jnk/blob/main/docs/guide/porting-workflow.md#3-register-in-all-four-places-same-commit).
         You're welcome to open a PR directly instead of an issue.
 
   - type: input
@@ -50,7 +50,7 @@ body:
         that takes or returns a struct **by value**, or needs an array of
         native structs, say so. Those need design thought rather than a
         mechanical port. See
-        [`docs/guide/raylib-api-coverage.md`](https://github.com/burinc/b12n-raylib-jnk/blob/main/docs/guide/raylib-api-coverage.md).
+        [`docs/guide/raylib-api-coverage.md`](https://github.com/b12n-oss/raylib-jnk/blob/main/docs/guide/raylib-api-coverage.md).
 
   - type: checkboxes
     id: offer

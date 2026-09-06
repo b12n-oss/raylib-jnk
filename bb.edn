@@ -1,4 +1,4 @@
-;; bb.edn - build and run the b12n-raylib-jnk raylib examples with Babashka.
+;; bb.edn - build and run the raylib-jnk raylib examples with Babashka.
 ;;
 ;;   bb info              grouped cheat-sheet of everything (start here)
 ;;   bb examples          list the runnable raylib examples

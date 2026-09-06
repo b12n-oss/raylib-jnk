@@ -1,6 +1,6 @@
-# b12n-raylib-jnk
+# raylib-jnk
 
-[![CI](https://github.com/burinc/b12n-raylib-jnk/actions/workflows/ci.yml/badge.svg)](https://github.com/burinc/b12n-raylib-jnk/actions/workflows/ci.yml)
+[![CI](https://github.com/b12n-oss/raylib-jnk/actions/workflows/ci.yml/badge.svg)](https://github.com/b12n-oss/raylib-jnk/actions/workflows/ci.yml)
 [![examples ported](https://img.shields.io/badge/examples_ported-212%2F220-brightgreen)](raylib-examples/README.md#porting-progress)
 [![categories complete](https://img.shields.io/badge/complete-shaders,_audio,_text,_textures-brightgreen)](raylib-examples/README.md#porting-progress)
 
@@ -29,7 +29,7 @@ Verified on macOS with jank `0.1-alpha` and `lein-jank 2026.06-1`.
 Clone with the submodule:
 
 ```sh
-git clone --recurse-submodules git@github.com:burinc/b12n-raylib-jnk.git
+git clone --recurse-submodules git@github.com:b12n-oss/raylib-jnk.git
 # or, after a plain clone:
 git submodule update --init --recursive
 ```

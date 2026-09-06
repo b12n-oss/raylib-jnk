@@ -14,8 +14,8 @@ New examples are welcome. The suite is deliberately mechanical to grow, and
 ## Setting up
 
 ```sh
-git clone --recurse-submodules git@github.com:burinc/b12n-raylib-jnk.git
-cd b12n-raylib-jnk
+git clone --recurse-submodules git@github.com:b12n-oss/raylib-jnk.git
+cd raylib-jnk
 bb check            # offline gates (fast)
 bb basic-window     # should open a window
 ```

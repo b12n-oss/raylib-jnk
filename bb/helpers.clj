@@ -1,5 +1,5 @@
 (ns helpers
-  "Helpers for the b12n-raylib-jnk bb tasks: install jank-raylib-sys and
+  "Helpers for the raylib-jnk bb tasks: install jank-raylib-sys and
   build/run the raylib examples."
   (:require [babashka.fs :as fs]
             [babashka.process :as p]
@@ -372,7 +372,7 @@
   (ok "Removed all */target build dirs."))
 
 (defn print-examples []
-  (header "🎮 b12n-raylib-jnk - raylib examples (jank)")
+  (header "🎮 raylib-jnk - raylib examples (jank)")
   (doseq [{:keys [profile desc controls]} examples]
     (println (str "  " (c :cyan (format "bb %-16s" profile)) " " desc))
     (when controls (println (str "  " (apply str (repeat 20 " ")) (c :magenta controls)))))

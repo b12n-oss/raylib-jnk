@@ -20,7 +20,7 @@ Verified on macOS with jank `0.1-alpha` and `lein-jank 2026.06-1`.
 clone with it:
 
 ```sh
-git clone --recurse-submodules git@github.com:burinc/b12n-raylib-jnk.git
+git clone --recurse-submodules git@github.com:b12n-oss/raylib-jnk.git
 # or, after a plain clone:
 git submodule update --init --recursive
 ```

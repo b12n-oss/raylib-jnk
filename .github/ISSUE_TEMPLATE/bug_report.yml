@@ -17,11 +17,11 @@ body:
           raylib is shadowing the vendored 6.0 through a jank compiler
           pathway that ignores the project's `-I` flags. `brew unlink raylib`
           and rebuild. [Full explanation and the closed-loop
-          test](https://github.com/burinc/b12n-raylib-jnk/blob/main/docs/guide/getting-started.md#troubleshooting).
+          test](https://github.com/b12n-oss/raylib-jnk/blob/main/docs/guide/getting-started.md#troubleshooting).
         - **`rlgl-compute` does not run.** It needs OpenGL 4.3 compute
           shaders; this repo builds at 3.3, and macOS caps at 4.1 regardless.
           [Documented in the
-          README](https://github.com/burinc/b12n-raylib-jnk#known-limitations).
+          README](https://github.com/b12n-oss/raylib-jnk#known-limitations).
         - **`git status` shows `jank-raylib-sys/raylib` as modified.** That is
           intentional, `bb` applies a patch to the submodule working tree on
           every invocation. See `jank-raylib-sys/patches/README.md`.

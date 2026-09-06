@@ -8,7 +8,7 @@
 CI runs `bb check`, reader syntax, the four registration touchpoints, and
 the EDN data files. It cannot compile anything (jank ships no current prebuilt
 binary), so the headless smoke run is still what proves an example works, and
-that part is on you. See [CONTRIBUTING.md](https://github.com/burinc/b12n-raylib-jnk/blob/main/CONTRIBUTING.md#before-you-open-a-pr).
+that part is on you. See [CONTRIBUTING.md](https://github.com/b12n-oss/raylib-jnk/blob/main/CONTRIBUTING.md#before-you-open-a-pr).
 
 - [ ] `bb check` passes locally
 - [ ] Ran the affected example(s) headlessly and got `exit=142` with a

@@ -1,6 +1,6 @@
-# b12n-raylib-jnk Guide
+# raylib-jnk Guide
 
-User-facing documentation for `b12n-raylib-jnk`: 212 [raylib](https://github.com/raysan5/raylib)
+User-facing documentation for `raylib-jnk`: 212 [raylib](https://github.com/raysan5/raylib)
 examples ported to **[jank](https://jank-lang.org)**, a native Clojure dialect
 (C++/LLVM), not the JVM. Each page below covers one interop pattern or raylib
 API surface, citing the example file that proves it.
@@ -14,7 +14,7 @@ cost real debugging time to find. Each page here is one of those rules,
 written up with the committed example that proves it, so the next person
 does not have to rediscover it by bisecting a failing draw loop.
 
-## What b12n-raylib-jnk is
+## What raylib-jnk is
 
 212 of the official raylib examples (shapes, core, text, textures, shaders,
 models, and audio), each a small jank namespace under
