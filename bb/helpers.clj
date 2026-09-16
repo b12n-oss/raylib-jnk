@@ -89,7 +89,7 @@
   []
   (ensure-submodules!)
   (info "Starting jank nREPL in raylib-examples/ (Ctrl-D to quit)")
-  (lein! "raylib-examples" "repl"))
+  (lein! "raylib-examples" "repl" "--disable-sandbox"))
 
 ;; ---------------------------------------------------------------------------
 ;; Examples registry
