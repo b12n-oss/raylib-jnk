@@ -21,9 +21,9 @@ models, and audio), each a small jank namespace under
 `raylib-examples/src/raylib_examples/`, each calling raylib's C API directly
 through `(:include "raylib.h")`.
 
-It is the **native-Clojure sibling** of [`b12n-raylib-jlt`](https://github.com/burinc/b12n-raylib-jlt)
-(raylib in Jolt/Chez Scheme) and of an unreleased JVM-Clojure port over
-`coffi`/Panama. All three bind the same C library
+It is the **native-Clojure sibling** of [`raylib-jlt`](https://github.com/jlt-commons/raylib-jlt)
+(raylib in Jolt/Chez Scheme) and of [`raylib-clj`](https://github.com/b12n-oss/raylib-clj)
+(JVM Clojure over `coffi`/Panama). All three bind the same C library
 directly; what differs is the boundary each language draws between its own
 values and C's:
 
@@ -112,9 +112,10 @@ against one real, struct-heavy graphics API across 212 examples.
 
 ## See also
 
-- [`b12n-raylib-jlt`](https://github.com/burinc/b12n-raylib-jlt): the same
+- [`raylib-jlt`](https://github.com/jlt-commons/raylib-jlt): the same
   idea in Jolt (Chez Scheme) over `jolt.ffi`. Its FFI boundary is per-*call*,
   not per-*value*: a `Camera3D` can live in an ordinary variable between FFI
   calls, unlike jank's native values.
-- An unreleased JVM-Clojure port over `coffi`/Panama takes the same per-call
-  boundary as Jolt, plus a garbage collector jank doesn't have to work around.
+- [`raylib-clj`](https://github.com/b12n-oss/raylib-clj): JVM Clojure over
+  `coffi`/Panama, with the same per-call boundary as Jolt, plus a garbage
+  collector jank doesn't have to work around.
