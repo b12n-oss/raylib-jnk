@@ -112,7 +112,8 @@ Prerequisites and patterns:
   ([`image_generation.jank`](https://github.com/b12n-oss/raylib-jank-demo/blob/main/image-generation/src/net/b12n/raylib_jnk/scenes/image_generation.jank)).
 - **`LoadTexture` from a PNG file works**: a jank string coerces to the
   `const char*` path. Resource files come from the vendored raylib
-  submodule via a path relative to the demo's own working dir:
+  submodule via a path relative to the demo's own working dir in
+  raylib-jank-demo:
   `../jank-raylib-sys/raylib/examples/textures/resources/...`
   ([`logo_texture.jank`](https://github.com/b12n-oss/raylib-jank-demo/blob/main/logo-texture/src/net/b12n/raylib_jnk/scenes/logo_texture.jank); the run log's `FILEIO: ... File loaded
   successfully` is the proof to grep for).

@@ -59,9 +59,9 @@ underscores, namespaces use kebab, and the directory is the kebab name: [`bullet
 `net.b12n.raylib-jnk.scenes.bullet-hell` in `bullet-hell/src/net/b12n/raylib_jnk/scenes/`. Comments must be ASCII (an em-dash trips the
 lexer).
 
-Before writing a new construct, grep the existing examples for a sibling that
-already uses it; every proven idiom has at least one committed example, and
-the [guide pages](index.md) index them by theme.
+Before writing a new construct, grep raylib-jank-demo's demos for a sibling
+that already uses it; every proven idiom has at least one committed demo there,
+and the [guide pages](index.md) index them by theme.
 
 Every example sets `(cpp/SetConfigFlags cpp/FLAG_WINDOW_HIGHDPI)` before
 `InitWindow` so windows scale with the monitor DPI (drawing stays at the
@@ -80,7 +80,8 @@ In raylib-jank-demo each example is its own Leiningen project, and its README's
 2. `<demo>/project.clj` and `<demo>/bb.edn`, copied from any existing demo
 3. a line in `demos.edn`
 4. `bb gen`, which adds the root task and the gallery entry
-5. the demo's own `docs/guide/index.md`
+5. the demo's own `docs/guide/index.md`, and its recording in both
+   `<demo>/docs/demos/` and `docs/demos/`
 
 Do not defer any of these; the registration IS part of the port.
 

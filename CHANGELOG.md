@@ -7,28 +7,6 @@ This file starts at the point the repo was opened to the public; the 209
 example ports that preceded it are in the git history, and the examples now
 live in [raylib-jank-demo](https://github.com/b12n-oss/raylib-jank-demo).
 
-## 2026-10-05
-
-### Changed
-
-- The examples moved to [raylib-jank-demo](https://github.com/b12n-oss/raylib-jank-demo), one Leiningen project per
-  example. This repo now holds only the documentation: the jank interop guide
-  under `docs/guide/` and its site. Namespaces were renamed from
-  `raylib-examples.<name>` to `net.b12n.raylib-jnk.scenes.<name>`, and the
-  helpers `raylib-examples.{models,shaders,rlights,rendertex}` became
-  `net.b12n.raylib-jnk.{models,shaders,rlights,rendertex}`. Guide pages that
-  cite an example now link to its source there.
-
-### Removed
-
-- `raylib-examples/`, the `jank-raylib-sys/raylib` asset submodule,
-  `docs/demos/` (the GIFs), `scripts/demo_manifest.edn`, the `bb` tasks and
-  `bb/` helpers, the clj-kondo config, the example CI job and the
-  example-specific issue templates. All of it is in raylib-jank-demo, and the
-  history here still holds every file.
-- `docs/guide/example-catalog.md`, which catalogued the examples. The catalog
-  is in raylib-jank-demo.
-
 ## [Unreleased]
 
 ### Added
@@ -63,6 +41,13 @@ live in [raylib-jank-demo](https://github.com/b12n-oss/raylib-jank-demo).
 
 ### Changed
 
+- The examples moved to [raylib-jank-demo](https://github.com/b12n-oss/raylib-jank-demo), one Leiningen project per
+  example. This repo now holds only the documentation: the jank interop guide
+  under `docs/guide/` and its site. Namespaces were renamed from
+  `raylib-examples.<name>` to `net.b12n.raylib-jnk.scenes.<name>`, and the
+  helpers `raylib-examples.{models,shaders,rlights,rendertex}` became
+  `net.b12n.raylib-jnk.{models,shaders,rlights,rendertex}`. Guide pages that
+  cite an example now link to its source there.
 - **`cpp/raw` down from 78 blocks to 5**, across 214 sources, and every
   example that can be ported has been. Four are blocked on a real jank gap (a
   jank fn cannot become a C function pointer, and `custom_logging` is variadic
@@ -94,6 +79,13 @@ live in [raylib-jank-demo](https://github.com/b12n-oss/raylib-jank-demo).
 
 ### Removed
 
+- `raylib-examples/`, the `jank-raylib-sys/raylib` asset submodule,
+  `docs/demos/` (the GIFs), `scripts/demo_manifest.edn`, the `bb` tasks and
+  `bb/` helpers, the clj-kondo config, the example CI job and the
+  example-specific issue templates. All of it is in raylib-jank-demo, and the
+  history here still holds every file.
+- `docs/guide/example-catalog.md`, which catalogued the examples. The catalog
+  is in raylib-jank-demo.
 - `bb docs-sync`. It published the guide to `raylib-jnk.b12n.app` through a
   sibling site repo, the shared wiki and S3. The site now publishes from CI
   to <https://b12n-oss.github.io/raylib-jnk/> on every push to `main`.

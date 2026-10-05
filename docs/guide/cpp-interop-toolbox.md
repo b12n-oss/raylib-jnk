@@ -183,7 +183,8 @@ and it is why that example carries no `cpp/raw` at all.
 `:define` clause, and an `ns` `:include` is always emitted ahead of any
 top-level form, so the define cannot be made to land first. The workaround
 keeps only the define in `cpp/raw` and pulls the header with a top-level
-`(include ...)` call - the same macro the `ns` clause expands to:
+`(include ...)` call - the same macro the `ns` clause expands to (the path is
+relative to the demo's directory in raylib-jank-demo):
 
 ```clojure
 (cpp/raw "#define MSF_GIF_IMPL")
