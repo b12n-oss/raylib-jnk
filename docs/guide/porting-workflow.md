@@ -4,27 +4,32 @@ This guide is the end-to-end process for porting one official raylib example
 to jank, as practiced across the first 50 ports. Follow it top to bottom and
 a port lands as one self-contained, tested, registered commit.
 
+The ports themselves live in [raylib-jank-demo](https://github.com/b12n-oss/raylib-jank-demo), one Leiningen project
+per example, so the steps below run there. This repo keeps the process write-up
+next to the interop rules it depends on.
+
 ## 1. Pick from the queue
 
-`raylib-examples/README.md` keeps the prioritized queue under "Not yet
-ported". Markers tell you the cost up front:
+The [official raylib example list](https://www.raylib.com/examples.html) is
+the queue, and `demos.edn` in raylib-jank-demo lists what is already ported.
+Markers tell you the cost up front:
 
 - *(no marker)*: pure raylib, port directly (these are all done now)
-- 🖼️: uses a `RenderTexture` (supported; see `lines_drawing.jank`)
+- 🖼️: uses a `RenderTexture` (supported; see [`lines_drawing.jank`](https://github.com/b12n-oss/raylib-jank-demo/blob/main/lines-drawing/src/net/b12n/raylib_jnk/scenes/lines_drawing.jank))
 - 🎛️: uses **raygui** controls; swap them for keyboard controls
   (see [raygui-to-keyboard.md](raygui-to-keyboard.md))
 - ⚙️: uses the low-level `rlgl` API. Turns out to work directly:
   `rlgl.h` is installed next to `raylib.h` and its functions live in
   `libraylib`, so `(:include "rlgl.h")` is all it takes (proof:
-  `rlgl_triangle.jank`)
+  [`rlgl_triangle.jank`](https://github.com/b12n-oss/raylib-jank-demo/blob/main/rlgl-triangle/src/net/b12n/raylib_jnk/scenes/rlgl_triangle.jank))
 
 ## 2. Port from the definitive C source
 
 The authoritative originals are raylib's own example programs, under
 [`examples/{core,shapes,text,...}/`](https://github.com/raysan5/raylib/tree/master/examples)
 (easing functions in `examples/shapes/reasings.h`). You already have a
-checkout: the vendored submodule at `jank-raylib-sys/raylib/examples/` is
-pinned to the same raylib commit the `raylib-sys` package builds, so it is the copy whose
+checkout: the vendored submodule at `jank-raylib-sys/raylib/examples/` in
+raylib-jank-demo is pinned to the same raylib commit the `raylib-sys` package builds, so it is the copy whose
 API actually matches.
 
 Port from the C, never from an intermediate binding. Ports-of-ports drift;
@@ -38,7 +43,7 @@ easings testbed verified all 28 easing formulas term-by-term against
 the namespace docstring:
 
 ```clojure
-(ns raylib-examples.bullet-hell
+(ns net.b12n.raylib-jnk.scenes.bullet-hell
   "raylib [shapes] example - bullet hell, ported to jank.
   ...controls...
   Based on raylib/examples/shapes/shapes_bullet_hell.c
@@ -50,8 +55,8 @@ the namespace docstring:
 
 Docstring format: title line, controls, `Based on <C file>`, then a
 `(jank-native: ...)` note for intentional deviations. File names use
-underscores, namespaces use kebab: `bullet_hell.jank` →
-`raylib-examples.bullet-hell`. Comments must be ASCII (an em-dash trips the
+underscores, namespaces use kebab, and the directory is the kebab name: [`bullet_hell.jank`](https://github.com/b12n-oss/raylib-jank-demo/blob/main/bullet-hell/src/net/b12n/raylib_jnk/scenes/bullet_hell.jank) →
+`net.b12n.raylib-jnk.scenes.bullet-hell` in `bullet-hell/src/net/b12n/raylib_jnk/scenes/`. Comments must be ASCII (an em-dash trips the
 lexer).
 
 Before writing a new construct, grep the existing examples for a sibling that
@@ -65,17 +70,17 @@ each call into its state, so it stacks with `FLAG_MSAA_4X_HINT` etc.
 Exceptions: `window-flags` (a flag-state demo) and the two `highdpi-*`
 examples (which manage DPI flags themselves).
 
-## 3. Register in all four places (same commit)
+## 3. Register the example (same commit)
 
-1. `raylib-examples/project.clj`: a `:profiles` entry
-2. `bb.edn`: a `bb <name>` task
-3. `bb/helpers.clj`: a row in the `examples` registry vector, including
-   its `:cat` (the raylib category keyword, which drives the `bb info` grouping)
-4. `raylib-examples/README.md`: move the example from the queue into the
-   ported table, bump the progress counts
+In raylib-jank-demo each example is its own Leiningen project, and its README's
+"Adding a demo" section is the checklist:
 
-The repo-root `README.md` carries no per-example table; it delegates the
-catalog to `raylib-examples/README.md`, so nothing there needs touching.
+1. `<demo>/src/net/b12n/raylib_jnk/scenes/<demo>.jank`, with the namespace
+   `net.b12n.raylib-jnk.scenes.<demo>` and a `-main`
+2. `<demo>/project.clj` and `<demo>/bb.edn`, copied from any existing demo
+3. a line in `demos.edn`
+4. `bb gen`, which adds the root task and the gallery entry
+5. the demo's own `docs/guide/index.md`
 
 Do not defer any of these; the registration IS part of the port.
 
@@ -87,9 +92,9 @@ extra-close-paren at the `recur` tail (which cost one wasted compile on
 `input_gestures_testbed`). jank sources read fine with the JVM reader:
 
 ```sh
-cd raylib-examples
+cd <name>      # inside raylib-jank-demo
 clojure -M -e "
-(let [text (slurp \"src/raylib_examples/<name>.jank\")
+(let [text (slurp \"src/net/b12n/raylib_jnk/scenes/<name_with_underscores>.jank\")
       r (java.io.PushbackReader. (java.io.StringReader. text))]
   (try
     (loop [forms []]
@@ -109,9 +114,9 @@ macOS has no `timeout` and this harness blocks a foreground `sleep`, so the
 reliable one-shot is a perl alarm:
 
 ```sh
-cd raylib-examples
+cd <name>      # inside raylib-jank-demo
 perl -e 'alarm 25; exec @ARGV' \
-  lein with-profile +<name> run --disable-sandbox > /tmp/run.log 2>&1
+  lein run --disable-sandbox > /tmp/run.log 2>&1
 echo "exit=$?"
 grep -icE "error|exception|Mismatched|small_real|small_integer|invalid object" /tmp/run.log
 ```
@@ -134,9 +139,9 @@ A 25 s headless run only exercises code that runs unconditionally. If the
 interesting path hides behind input (a hover, a key, a generation count),
 temporarily force the state, run, then revert before committing:
 
-- `penrose_tile.jank`: forced `gen 2` + prebuilt tokens to exercise the
+- [`penrose_tile.jank`](https://github.com/b12n-oss/raylib-jank-demo/blob/main/penrose-tile/src/net/b12n/raylib_jnk/scenes/penrose_tile.jank): forced `gen 2` + prebuilt tokens to exercise the
   L-system, then reverted.
-- `input_box.jank`: forced `on-text? true` and seeded the name from the
+- [`input_box.jank`](https://github.com/b12n-oss/raylib-jank-demo/blob/main/input-box/src/net/b12n/raylib_jnk/scenes/input_box.jank): forced `on-text? true` and seeded the name from the
   ASCII table so the caret/`MeasureText` path ran, then reverted.
 
 Note the probe in the commit message so reviewers know the gated path was
@@ -144,9 +149,9 @@ actually executed.
 
 ## 5. Commit
 
-- One example per commit when practical (registry rows interleave if you
+- One example per commit when practical (`demos.edn` rows interleave if you
   batch two; fine occasionally, but singles keep history greppable).
-- Subject: `raylib-examples: port <official_source_name>`.
+- Subject: `<name>: port <official_source_name>`.
 - Body: the interesting jank-native decisions, and any NEW interop lesson the
   port surfaced.
 - Stage files by explicit path; never `git add -A`/`.`/`-u`.

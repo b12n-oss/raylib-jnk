@@ -111,10 +111,10 @@ throughout, arrays via `cpp/MemAlloc` + `cpp/unsafe-cast`:
 ```
 
 `MemAlloc` does not zero, unlike `RL_CALLOC`. Zero it yourself if the
-algorithm assumes it (`screen_buffer.jank`, `spectrum_visualizer.jank`).
+algorithm assumes it ([`screen_buffer.jank`](https://github.com/b12n-oss/raylib-jank-demo/blob/main/screen-buffer/src/net/b12n/raylib_jnk/scenes/screen_buffer.jank), [`spectrum_visualizer.jank`](https://github.com/b12n-oss/raylib-jank-demo/blob/main/spectrum-visualizer/src/net/b12n/raylib_jnk/scenes/spectrum_visualizer.jank)).
 
-Worked examples: `screen_buffer.jank` (fire simulation, 90k cells twice a
-frame), `spectrum_visualizer.jank` (1024-point FFT a frame).
+Worked examples: [`screen_buffer.jank`](https://github.com/b12n-oss/raylib-jank-demo/blob/main/screen-buffer/src/net/b12n/raylib_jnk/scenes/screen_buffer.jank) (fire simulation, 90k cells twice a
+frame), [`spectrum_visualizer.jank`](https://github.com/b12n-oss/raylib-jank-demo/blob/main/spectrum-visualizer/src/net/b12n/raylib_jnk/scenes/spectrum_visualizer.jank) (1024-point FFT a frame).
 
 ## Two loop traps
 
@@ -129,8 +129,8 @@ identifier:
 
 The idiomatic Clojure form is the broken one. Rename the inner binding.
 
-Seen twice: a native `cpp/int` counter in `spectrum_visualizer.jank`, and a
-**boxed jank vector** accumulator in `decals.jank`, where an inner loop
+Seen twice: a native `cpp/int` counter in [`spectrum_visualizer.jank`](https://github.com/b12n-oss/raylib-jank-demo/blob/main/spectrum-visualizer/src/net/b12n/raylib_jnk/scenes/spectrum_visualizer.jank), and a
+**boxed jank vector** accumulator in [`decals.jank`](https://github.com/b12n-oss/raylib-jank-demo/blob/main/decals/src/net/b12n/raylib_jnk/scenes/decals.jank), where an inner loop
 counted 3666 elements while the outer received 0. So it is not about native
 types. In both cases the inner loop **recurs**; an inner loop that returns
 without recurring has behaved correctly. Which of those is load-bearing is
@@ -147,7 +147,7 @@ reads a slot written earlier in the same `recur` sees the new value:
 ```
 
 Break the alias by binding first, or by forcing a copy with `(int x)`.
-`unicode_ranges.jank` carries the fix.
+[`unicode_ranges.jank`](https://github.com/b12n-oss/raylib-jank-demo/blob/main/unicode-ranges/src/net/b12n/raylib_jnk/scenes/unicode_ranges.jank) carries the fix.
 
 ## Related
 

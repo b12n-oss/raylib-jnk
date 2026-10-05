@@ -1,7 +1,7 @@
 # raylib API coverage
 
 What raylib surface area is proven working against this port, and how.
-Each section cites the committed example that proves it; these examples
+Each section cites the example in [raylib-jank-demo](https://github.com/b12n-oss/raylib-jank-demo) that proves it; these examples
 double as the running test suite for the claims below.
 
 ## Fonts load like textures (from the text arc, 2026-07-03)
@@ -14,8 +14,8 @@ the loop, `UnloadFont` after. `LoadFontEx`'s codepoint-array arg is passed as
 `cpp/nullptr` for the default set. `.-baseSize` reads back fine (nth-box it for
 the `cpp/float` size arg). Proof lines: `FONT: ... Font loaded successfully`,
 `FONT: Data loaded successfully (32 pixel size | 184 glyphs)`
-(`font_loading.jank`). String literals MAY be UTF-8 (disproving an earlier
-version of this note): `codepoints_loading.jank` defs the Japanese Iroha
+([`font_loading.jank`](https://github.com/b12n-oss/raylib-jank-demo/blob/main/font-loading/src/net/b12n/raylib_jnk/scenes/font_loading.jank)). String literals MAY be UTF-8 (disproving an earlier
+version of this note): [`codepoints_loading.jank`](https://github.com/b12n-oss/raylib-jank-demo/blob/main/codepoints-loading/src/net/b12n/raylib_jnk/scenes/codepoints_loading.jank) defs the Japanese Iroha
 pangram in-source, and the lexer, `LoadCodepoints`, and `DrawTextEx` all
 handle it. The ASCII-only restriction is about COMMENTS (the em-dash
 `lex/invalid-unicode` trip).
@@ -24,7 +24,7 @@ handle it. The ASCII-only restriction is about COMMENTS (the em-dash
 
 **Mesh/Model loading works with zero wrapper changes**: the long-assumed
 "LoadModel blocker" was never real, exactly as with `Font`. Proven in
-`texture_tiling.jank`:
+[`texture_tiling.jank`](https://github.com/b12n-oss/raylib-jank-demo/blob/main/texture-tiling/src/net/b12n/raylib_jnk/scenes/texture_tiling.jank):
 
 - `(cpp/GenMeshCube (cpp/float 1.0) ...)` returns a `Mesh` by value;
   passing it inline to `cpp/LoadModelFromMesh` yields a `Model` that binds
@@ -35,24 +35,24 @@ handle it. The ASCII-only restriction is about COMMENTS (the em-dash
   `model.materials[0].maps[MATERIAL_MAP_DIFFUSE].texture = tex` (and
   `.shader = s`) spells directly in jank:
   `(cpp/= (.-shader (cpp/aget (.-materials model) (cpp/int 0))) s)`.
-  `models.jank` wraps the common ones.
+  [`models.jank`](https://github.com/b12n-oss/raylib-jank-demo/blob/main/common/src/net/b12n/raylib_jnk/models.jank) wraps the common ones.
 - `UnloadModel` after the loop, as usual for create-once resources.
-- **`LoadModel` from a FILE works too** (`model_loading.jank`, the castle
+- **`LoadModel` from a FILE works too** ([`model_loading.jank`](https://github.com/b12n-oss/raylib-jank-demo/blob/main/model-loading/src/net/b12n/raylib_jnk/scenes/model_loading.jank), the castle
   OBJ + its .png diffuse): same shape, just returns a `Model`. Reading
   `model.meshes[0]` for `GetMeshBoundingBox` is a plain struct-array read:
   `(cpp/GetMeshBoundingBox (cpp/aget (.-meshes model) (cpp/int 0)))`.
-- **GLB works too** (`cel_shading.jank`, the old_car_new.glb toon car):
+- **GLB works too** ([`cel_shading.jank`](https://github.com/b12n-oss/raylib-jank-demo/blob/main/cel-shading/src/net/b12n/raylib_jnk/scenes/cel_shading.jank), the old_car_new.glb toon car):
   `MODEL: ... Model basic data (glb) loaded successfully`. Reading a
   Shader back off the material is `(.-shader (cpp/aget (.-materials m)
   (cpp/int 0)))`, bound to a let-local like any create-once native.
 - **Animations, deep Mesh edits and bare Materials work too**
   (2026-07-11): `LoadModelAnimations`' `ModelAnimation*` + `int*`
   out-param stay behind C statics with index-based wrappers, and
-  `UpdateModelAnimation` runs per frame (`shadowmap_rendering.jank`);
+  `UpdateModelAnimation` runs per frame ([`shadowmap_rendering.jank`](https://github.com/b12n-oss/raylib-jank-demo/blob/main/shadowmap-rendering/src/net/b12n/raylib_jnk/scenes/shadowmap_rendering.jank));
   a `texcoords2` channel can be RL_MALLOC'd, filled and wired to a
-  vertex attribute through `(cpp/& mesh)` (`lightmap_rendering.jank`);
+  vertex attribute through `(cpp/& mesh)` ([`lightmap_rendering.jank`](https://github.com/b12n-oss/raylib-jank-demo/blob/main/lightmap-rendering/src/net/b12n/raylib_jnk/scenes/lightmap_rendering.jank));
   `LoadMaterialDefault` binds by value and its fields are written with
-  `cpp/=` (`mesh_instancing.jank`, which also proves `DrawMeshInstanced`
+  `cpp/=` ([`mesh_instancing.jank`](https://github.com/b12n-oss/raylib-jank-demo/blob/main/mesh-instancing/src/net/b12n/raylib_jnk/scenes/mesh_instancing.jank), which also proves `DrawMeshInstanced`
   over a `cpp/MemAlloc` Matrix array).
 - **Every model format is proven** (2026-07-11): OBJ (`model_loading`),
   GLB (`cel_shading`), IQM incl. separate animation files
@@ -62,7 +62,7 @@ handle it. The ASCII-only restriction is about COMMENTS (the em-dash
 
 ## Compute shaders work (GL 4.3 build, 2026-07-11)
 
-`rlgl_compute.jank` proves the whole compute pipeline: compile
+[`rlgl_compute.jank`](https://github.com/b12n-oss/raylib-jank-demo/blob/main/rlgl-compute/src/net/b12n/raylib_jnk/scenes/rlgl_compute.jank) proves the whole compute pipeline: compile
 (`rlLoadShader src RL_COMPUTE_SHADER` + `rlLoadShaderProgramCompute`),
 SSBOs (`rlLoadShaderBuffer` with
 `cpp/nullptr` data), `rlBindShaderBuffer`, and
@@ -92,40 +92,40 @@ Prerequisites and patterns:
 
 - **rlgl immediate mode works directly**: `(:include "raylib.h" "rlgl.h")`
   gives `rlBegin`/`rlColor4ub`/`rlColor4f`/`rlVertex2f`/`rlEnd`
-  (`rlgl_triangle.jank`), custom blend pipelines via `rlSetBlendFactors` +
+  ([`rlgl_triangle.jank`](https://github.com/b12n-oss/raylib-jank-demo/blob/main/rlgl-triangle/src/net/b12n/raylib_jnk/scenes/rlgl_triangle.jank)), custom blend pipelines via `rlSetBlendFactors` +
   `rlSetBlendMode cpp/BLEND_CUSTOM` + `rlDrawRenderBatchActive`
-  (`top_down_lights.jank`), and full vertex-colored batches
-  (`rectangle_advanced.jank`). Raw GL constants pass as plain ints.
+  ([`top_down_lights.jank`](https://github.com/b12n-oss/raylib-jank-demo/blob/main/top-down-lights/src/net/b12n/raylib_jnk/scenes/top_down_lights.jank)), and full vertex-colored batches
+  ([`rectangle_advanced.jank`](https://github.com/b12n-oss/raylib-jank-demo/blob/main/rectangle-advanced/src/net/b12n/raylib_jnk/scenes/rectangle_advanced.jank)). Raw GL constants pass as plain ints.
 - **The rlgl matrix stack works in 3D**: `rlPushMatrix`/`rlPopMatrix`/
   `rlRotatef`/`rlTranslatef`/`rlScalef` nest hierarchical transforms
   inside `BeginMode3D`, and regular raylib draws (`DrawSphere`) render
   through the same batch so the stack applies to them
-  (`rlgl_solar_system.jank` - Sun/Earth/Moon).
+  ([`rlgl_solar_system.jank`](https://github.com/b12n-oss/raylib-jank-demo/blob/main/rlgl-solar-system/src/net/b12n/raylib_jnk/scenes/rlgl_solar_system.jank) - Sun/Earth/Moon).
 - **Color field read-back works**: bind a returned Color to a let-local and
   read `(.-r c)`/`(.-g c)`/`(.-b c)`/`(.-a c)`, then feed them native-to-native
   into `rlColor4ub`, or box with `(int (+ 0.0 ...))` to store as jank ints
-  (`rlgl_color_wheel.jank`).
+  ([`rlgl_color_wheel.jank`](https://github.com/b12n-oss/raylib-jank-demo/blob/main/rlgl-color-wheel/src/net/b12n/raylib_jnk/scenes/rlgl_color_wheel.jank)).
 - **Image → Texture loading works**: `(cpp/GenImageChecked ...)` →
   `(cpp/LoadTextureFromImage img)` → `(cpp/UnloadImage img)`, with the
   Texture2D held in the outer `let` like a RenderTexture
-  (`top_down_lights.jank`). All nine `GenImage*` algorithms work
-  (`image_generation.jank`).
+  ([`top_down_lights.jank`](https://github.com/b12n-oss/raylib-jank-demo/blob/main/top-down-lights/src/net/b12n/raylib_jnk/scenes/top_down_lights.jank)). All nine `GenImage*` algorithms work
+  ([`image_generation.jank`](https://github.com/b12n-oss/raylib-jank-demo/blob/main/image-generation/src/net/b12n/raylib_jnk/scenes/image_generation.jank)).
 - **`LoadTexture` from a PNG file works**: a jank string coerces to the
   `const char*` path. Resource files come from the vendored raylib
-  submodule via a path relative to the `raylib-examples/` working dir:
+  submodule via a path relative to the demo's own working dir:
   `../jank-raylib-sys/raylib/examples/textures/resources/...`
-  (`logo_texture.jank`; the run log's `FILEIO: ... File loaded
+  ([`logo_texture.jank`](https://github.com/b12n-oss/raylib-jank-demo/blob/main/logo-texture/src/net/b12n/raylib_jnk/scenes/logo_texture.jank); the run log's `FILEIO: ... File loaded
   successfully` is the proof to grep for).
 - **N textures = N outer-let bindings + a nested-if dispatch** on the
   current index; the array-of-textures idiom has no direct jank shape
-  (`image_generation.jank`'s nine).
+  ([`image_generation.jank`](https://github.com/b12n-oss/raylib-jank-demo/blob/main/image-generation/src/net/b12n/raylib_jnk/scenes/image_generation.jank)'s nine).
 - **Per-entity RenderTexture caches don't map to jank**: native handles
   can't live in a jank vector. Restructure to one reused scratch RT plus a
-  rebuild-on-dirty pass (`top_down_lights.jank` replaces the C's 16 cached
+  rebuild-on-dirty pass ([`top_down_lights.jank`](https://github.com/b12n-oss/raylib-jank-demo/blob/main/top-down-lights/src/net/b12n/raylib_jnk/scenes/top_down_lights.jank) replaces the C's 16 cached
   per-light masks this way).
 - **Variable-winding fans**: when a quad's winding depends on runtime
   geometry (shadow volumes), draw each triangle in BOTH windings or
-  backface culling eats half of them (`top_down_lights.jank`'s draw-quad).
+  backface culling eats half of them ([`top_down_lights.jank`](https://github.com/b12n-oss/raylib-jank-demo/blob/main/top-down-lights/src/net/b12n/raylib_jnk/scenes/top_down_lights.jank)'s draw-quad).
 
 ## Audio (from the textures arc, 2026-07-03)
 
@@ -134,14 +134,14 @@ Prerequisites and patterns:
 `raylib.h` functions compiled into `libraylib` (miniaudio / Core Audio
 backend on macOS). The `Sound` value is a native struct, with the same rules as
 `Texture2D`: bind it in the outer `let`, use it inside the frame loop via
-lexical capture, unload after (`sprite_button.jank`). The run log's
+lexical capture, unload after ([`sprite_button.jank`](https://github.com/b12n-oss/raylib-jank-demo/blob/main/sprite-button/src/net/b12n/raylib_jnk/scenes/sprite_button.jank)). The run log's
 `AUDIO: Device initialized successfully` + `WAVE: Data loaded
 successfully` are the proof lines to grep for. OGG decoding works too
-(`sound_loading.jank`), and so do music streams: `LoadMusicStream` (MP3),
+([`sound_loading.jank`](https://github.com/b12n-oss/raylib-jank-demo/blob/main/sound-loading/src/net/b12n/raylib_jnk/scenes/sound_loading.jank)), and so do music streams: `LoadMusicStream` (MP3),
 `UpdateMusicStream` once per frame, `Play`/`Stop`/`Pause`/`Resume`,
 `SetMusicPan`/`SetMusicVolume` (jank real through `cpp/float`), and
 `GetMusicTimePlayed`/`GetMusicTimeLength` boxed at the binding site
-(`music_stream.jank`; proof line `STREAM: Initialized successfully`).
+([`music_stream.jank`](https://github.com/b12n-oss/raylib-jank-demo/blob/main/music-stream/src/net/b12n/raylib_jnk/scenes/music_stream.jank); proof line `STREAM: Initialized successfully`).
 The remaining audio surface to probe is the callback-taking APIs
 (`SetAudioStreamCallback`, audio processors), likely a real blocker,
 same class as C function pointers elsewhere.
@@ -152,24 +152,24 @@ same class as C function pointers elsewhere.
 `cpp/Vector3` args + fovy + `cpp/CAMERA_PERSPECTIVE`, binds as an
 outer-let local, and drives `BeginMode3D`/`EndMode3D`; `DrawGrid` and
 `DrawSphere` (Vector3 built inline as a call arg) render inside it
-(`sound_positioning.jank`). Two constraints shape 3D ports:
+([`sound_positioning.jank`](https://github.com/b12n-oss/raylib-jank-demo/blob/main/sound-positioning/src/net/b12n/raylib_jnk/scenes/sound_positioning.jank)). Two constraints shape 3D ports:
 
 - **Free-look cameras WORK now** (2026-07-05): `UpdateCamera
   ((cpp/& camera) mode)` forms the pointer with the image-processing
   address-of pattern ([cpp-interop-toolbox.md](cpp-interop-toolbox.md))
   on an OUTER-let Camera3D, and the mutation
   persists across frames (probe: 100 orbital frames drifted position.x
-  from 10.0 to 14.03); see `camera_3d_free.jank`. Struct FIELD writes
+  from 10.0 to 14.03); see [`camera_3d_free.jank`](https://github.com/b12n-oss/raylib-jank-demo/blob/main/camera-3d-free/src/net/b12n/raylib_jnk/scenes/camera_3d_free.jank). Struct FIELD writes
   are `cpp/=` on the field: `(cpp/= (.-x (.-target c)) (cpp/float v))`.
   The older per-frame-rebuild workaround remains
   valid and simpler when the camera path is fully jank-driven:
-  `billboard_rendering.jank` constructs the whole `cpp/Camera3D` as a
+  [`billboard_rendering.jank`](https://github.com/b12n-oss/raylib-jank-demo/blob/main/billboard-rendering/src/net/b12n/raylib_jnk/scenes/billboard_rendering.jank) constructs the whole `cpp/Camera3D` as a
   frame-let local from an accumulated angle, and `DrawBillboard*`
   accept it by value. `BoundingBox` also constructs inline from two nested
   `cpp/Vector3`s for `CheckCollisionBoxes` / `CheckCollisionBoxSphere`
-  (`box_collisions.jank`).
+  ([`box_collisions.jank`](https://github.com/b12n-oss/raylib-jank-demo/blob/main/box-collisions/src/net/b12n/raylib_jnk/scenes/box_collisions.jank)).
 - **No raymath vector helpers through jank fns**: `Vector3Subtract` etc.
   return native structs, fine inline, but a chain of them can't thread
   jank helper fns; do the vector math as scalar jank arithmetic on
   plain reals instead (the attenuation/pan math in
-  `sound_positioning.jank` replaces five raymath calls this way).
+  [`sound_positioning.jank`](https://github.com/b12n-oss/raylib-jank-demo/blob/main/sound-positioning/src/net/b12n/raylib_jnk/scenes/sound_positioning.jank) replaces five raymath calls this way).

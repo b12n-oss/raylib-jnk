@@ -4,8 +4,30 @@ Notable changes to this project. Format loosely follows
 [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 
 This file starts at the point the repo was opened to the public; the 209
-example ports that preceded it are in the git history and in
-[`raylib-examples/README.md`](raylib-examples/README.md).
+example ports that preceded it are in the git history, and the examples now
+live in [raylib-jank-demo](https://github.com/b12n-oss/raylib-jank-demo).
+
+## 2026-10-05
+
+### Changed
+
+- The examples moved to [raylib-jank-demo](https://github.com/b12n-oss/raylib-jank-demo), one Leiningen project per
+  example. This repo now holds only the documentation: the jank interop guide
+  under `docs/guide/` and its site. Namespaces were renamed from
+  `raylib-examples.<name>` to `net.b12n.raylib-jnk.scenes.<name>`, and the
+  helpers `raylib-examples.{models,shaders,rlights,rendertex}` became
+  `net.b12n.raylib-jnk.{models,shaders,rlights,rendertex}`. Guide pages that
+  cite an example now link to its source there.
+
+### Removed
+
+- `raylib-examples/`, the `jank-raylib-sys/raylib` asset submodule,
+  `docs/demos/` (the GIFs), `scripts/demo_manifest.edn`, the `bb` tasks and
+  `bb/` helpers, the clj-kondo config, the example CI job and the
+  example-specific issue templates. All of it is in raylib-jank-demo, and the
+  history here still holds every file.
+- `docs/guide/example-catalog.md`, which catalogued the examples. The catalog
+  is in raylib-jank-demo.
 
 ## [Unreleased]
 

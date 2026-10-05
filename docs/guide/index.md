@@ -1,9 +1,11 @@
 # raylib-jnk Guide
 
-User-facing documentation for `raylib-jnk`: 212 [raylib](https://github.com/raysan5/raylib)
-examples ported to **[jank](https://jank-lang.org)**, a native Clojure dialect
-(C++/LLVM), not the JVM. Each page below covers one interop pattern or raylib
-API surface, citing the example file that proves it.
+User-facing documentation for `raylib-jnk`: what came out of porting 212
+[raylib](https://github.com/raysan5/raylib) examples to
+**[jank](https://jank-lang.org)**, a native Clojure dialect (C++/LLVM), not the
+JVM. The examples live in [raylib-jank-demo](https://github.com/b12n-oss/raylib-jank-demo). Each page below covers one
+interop pattern or raylib API surface, citing the example file there that
+proves it.
 
 ## Why this exists
 
@@ -16,10 +18,11 @@ does not have to rediscover it by bisecting a failing draw loop.
 
 ## What raylib-jnk is
 
-212 of the official raylib examples (shapes, core, text, textures, shaders,
-models, and audio), each a small jank namespace under
-`raylib-examples/src/raylib_examples/`, each calling raylib's C API directly
-through `(:include "raylib.h")`.
+The guide to 212 of the official raylib examples (shapes, core, text,
+textures, shaders, models, and audio), each a small jank namespace in
+[raylib-jank-demo](https://github.com/b12n-oss/raylib-jank-demo) under `<name>/src/net/b12n/raylib_jnk/scenes/`, each
+calling raylib's C API directly through `(:include "raylib.h")`. This repo
+holds the documentation only.
 
 It is the **native-Clojure sibling** of [`raylib-jlt`](https://github.com/jlt-commons/raylib-jlt)
 (raylib in Jolt/Chez Scheme) and of [`raylib-clj`](https://github.com/b12n-oss/raylib-clj)
@@ -98,15 +101,14 @@ against one real, struct-heavy graphics API across 212 examples.
 
 ### Orientation
 
-- [`getting-started.md`](getting-started.md): requirements, cloning with
-  the submodule, and the `bb` task surface.
+- [`getting-started.md`](getting-started.md): requirements, cloning
+  raylib-jank-demo with its submodule, running an example, and the
+  environment traps.
 - [`porting-workflow.md`](porting-workflow.md): the end-to-end process for
-  porting one example: source of truth, file layout, the five-place
-  registration, the headless smoke test.
-- [`example-catalog.md`](example-catalog.md): a tour of all 212 examples
-  grouped by raylib category, and how to add one (now with a preview GIF
-  per recorded example; see [`docs/demos/README.md`](../demos/README.md)
-  for the full gallery).
+  porting one example: source of truth, file layout, registration, the
+  headless smoke test.
+- The catalog of all the examples, grouped by raylib category, with a preview
+  GIF per recorded example, is in [raylib-jank-demo](https://github.com/b12n-oss/raylib-jank-demo).
 - [`raygui-to-keyboard.md`](raygui-to-keyboard.md): the pattern for
   porting raygui-based examples (sliders/checkboxes) to keyboard controls.
 
