@@ -103,9 +103,9 @@ a C-interop toolbox, why a hot numeric loop wants `cpp/` operators rather
 than ordinary jank arithmetic, raylib API coverage notes, the porting
 workflow, and the full example catalog.
 
-Rebuilding and republishing that guide as a site is a maintainer task:
-`bb docs-sync` (`--no-push` to build and commit without publishing
-anything). It needs the sibling `b12n-docs` checkout and AWS credentials.
+The same guide is published as a site at
+<https://b12n-oss.github.io/raylib-jnk/>. CI rebuilds it on every push to
+`main`, so there is no publish step to run by hand.
 
 ## Credits
 

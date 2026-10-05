@@ -72,6 +72,9 @@ example ports that preceded it are in the git history and in
 
 ### Removed
 
+- `bb docs-sync`. It published the guide to `raylib-jnk.b12n.app` through a
+  sibling site repo, the shared wiki and S3. The site now publishes from CI
+  to <https://b12n-oss.github.io/raylib-jnk/> on every push to `main`.
 - The vendored `jank-raylib-sys` wrapper, including its `project.clj`,
   `jank-build.bb`, `jank_rlights.h`, and the macOS OpenGL forward-compat
   patch. The `raylib` submodule remains, but only as the source of example
