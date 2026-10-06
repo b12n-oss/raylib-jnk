@@ -4,9 +4,9 @@ Many official shapes examples build their UI with **raygui** sliders and
 checkboxes. raygui is not part of the `raylib-sys` package, so those examples get a
 keyboard-driven port: sliders become held-key adjustments, checkboxes become
 toggle keys, and the raygui panel becomes plain `DrawText` lines showing live
-values. The pattern was established by `easings_testbed.jank` and refined
-across `ring_drawing.jank`, `circle_sector_drawing.jank`,
-`rounded_rectangle.jank`, and `recursive_tree.jank`.
+values. The pattern was established by [`easings_testbed.jank`](https://github.com/b12n-oss/raylib-jank-demo/blob/main/easings-testbed/src/net/b12n/raylib_jnk/scenes/easings_testbed.jank) and refined
+across [`ring_drawing.jank`](https://github.com/b12n-oss/raylib-jank-demo/blob/main/ring-drawing/src/net/b12n/raylib_jnk/scenes/ring_drawing.jank), [`circle_sector_drawing.jank`](https://github.com/b12n-oss/raylib-jank-demo/blob/main/circle-sector-drawing/src/net/b12n/raylib_jnk/scenes/circle_sector_drawing.jank),
+[`rounded_rectangle.jank`](https://github.com/b12n-oss/raylib-jank-demo/blob/main/rounded-rectangle/src/net/b12n/raylib_jnk/scenes/rounded_rectangle.jank), and [`recursive_tree.jank`](https://github.com/b12n-oss/raylib-jank-demo/blob/main/recursive-tree/src/net/b12n/raylib_jnk/scenes/recursive_tree.jank).
 
 ## The adj helper
 
@@ -67,15 +67,15 @@ switch: `(if (>= segs min-segs) cpp/MAROON cpp/DARKGRAY)`.
   (`[R] Draw Ring`, `[B] Bezier`).
 - Q quits (the repo-wide convention) UNLESS the example needs Q or types
   free text:
-  - `easings_testbed.jank` keeps the C's Q/W duration keys, so only ESC
+  - [`easings_testbed.jank`](https://github.com/b12n-oss/raylib-jank-demo/blob/main/easings-testbed/src/net/b12n/raylib_jnk/scenes/easings_testbed.jank) keeps the C's Q/W duration keys, so only ESC
     quits there. Document that clearly in every registry surface.
-  - `input_box.jank` accepts typed characters, so it quits on Q only while
+  - [`input_box.jank`](https://github.com/b12n-oss/raylib-jank-demo/blob/main/input-box/src/net/b12n/raylib_jnk/scenes/input_box.jank) accepts typed characters, so it quits on Q only while
     the mouse is OUTSIDE the box.
-- Always list the full mapping in three places: the namespace docstring, the
-  `bb/helpers.clj` controls string, and the README table row. Drift between
-  those surfaces is a real failure mode a code review caught (the root
-  README's easings-testbed row omitted the quit key while helpers said
-  "ESC quit").
+- Always list the full mapping in three places in raylib-jank-demo: the
+  namespace docstring, the demo's `:controls` in `demos.edn`, and its own
+  `docs/guide/index.md`. Drift between such surfaces is a real failure mode:
+  a code review once caught an easings-testbed listing that omitted the quit
+  key while another surface said "ESC quit".
 
 ## Porting checklist for a 🎛️ example
 

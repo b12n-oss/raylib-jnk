@@ -1,3 +1,0 @@
-[submodule "jank-raylib-sys/raylib"]
-	path = jank-raylib-sys/raylib
-	url = https://github.com/raysan5/raylib

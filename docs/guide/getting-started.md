@@ -1,7 +1,9 @@
 # Getting started
 
-This mirrors the root README's Quick start section with a bit more context;
-if you only need the commands, the README's shorter version is enough.
+The examples these notes are about live in
+[raylib-jank-demo](https://github.com/b12n-oss/raylib-jank-demo). This page covers what you need to build and run them,
+and the environment traps that are easy to hit. The repo's README is the
+authority on its exact commands.
 
 ## Requirements
 
@@ -10,34 +12,30 @@ if you only need the commands, the README's shorter version is enough.
   the native-build middleware)
 - A C++ compiler
 - CMake
-- [Babashka](https://babashka.org)
+- [Babashka](https://babashka.org), for raylib-jank-demo's task runner
 
 Verified on macOS with jank `0.1-alpha` and `lein-jank 2026.06-1`.
 
-## Clone with the submodule
+## Clone raylib-jank-demo with its submodule
 
-`raylib` is vendored as a git submodule for the example assets, so
+`raylib` is vendored there as a git submodule for the example assets, so
 clone with it:
 
 ```sh
-git clone --recurse-submodules git@github.com:b12n-oss/raylib-jnk.git
+git clone --recurse-submodules https://github.com/b12n-oss/raylib-jank-demo
 # or, after a plain clone:
 git submodule update --init --recursive
 ```
 
-## The `bb` task surface
+## Running an example
+
+From the root of raylib-jank-demo:
 
 ```sh
-bb info              # grouped cheat-sheet of everything (start here)
-bb examples          # list every runnable example
-bb starfield         # run one (fetches example assets on first use)
-bb run particles     # same, by argument
-bb run-all           # cycle through every example, ~15s each (a demo reel)
-bb run-all 40        # ...longer per example (also covers first-run compiles)
-
-bb check             # offline gates: syntax, registration, EDN
-bb nrepl             # a jank nREPL with cpp/ interop live in it
-bb clean             # remove */target build dirs
+bb doctor            # checks lein, a jank that starts, the asset submodule
+bb info              # grouped cheat-sheet of every demo
+bb starfield         # run one demo by name
+bb run-all 4         # every demo for 4 seconds each
 ```
 
 If the `lein` on your `PATH` can't bootstrap, set `LEIN=/path/to/lein`.
@@ -45,13 +43,13 @@ If the `lein` on your `PATH` can't bootstrap, set `LEIN=/path/to/lein`.
 ## Manual usage (without `bb`)
 
 ```sh
-cd raylib-examples && lein with-profile +<example> run --disable-sandbox
+cd starfield && lein run --disable-sandbox
 ```
 
 ## macOS
 
 There is no `bwrap` on macOS, so the native build must run with sandboxing
-disabled. Every `bb`/`lein` invocation above already passes
+disabled. Every `bb`/`lein` invocation in raylib-jank-demo already passes
 `--disable-sandbox` for you.
 
 **Known limitation:** `rlgl-compute` needs OpenGL 4.3 compute-shader
@@ -65,10 +63,10 @@ section for the manual override recipe (which still won't work on macOS).
 
 ### A handful of examples fail to compile, naming a raylib header you don't recognise
 
-If a compile error cites a header outside this repo (most often
+If a compile error cites a header outside the checkout (most often
 `/opt/homebrew/include/raylib.h` or `/usr/local/include/raylib.h`), you have
 a system-wide raylib installed that is shadowing the vendored one, and it is
-an older version than the 6.0 this repo pins.
+an older version than the 6.0 raylib-jank-demo pins.
 
 The tell is the compiler's own diagnostic pointing at the wrong file:
 

@@ -27,8 +27,8 @@ Fails:
 ;; to a jank runtime object
 ```
 
-Proof: `dashed_line.jank` (return), `digital_clock.jank` and
-`tiled_drawing.jank` (parameter), `input_mouse.jank` (`loop`/`recur` state).
+Proof: [`dashed_line.jank`](https://github.com/b12n-oss/raylib-jank-demo/blob/main/dashed-line/src/net/b12n/raylib_jnk/scenes/dashed_line.jank) (return), [`digital_clock.jank`](https://github.com/b12n-oss/raylib-jank-demo/blob/main/digital-clock/src/net/b12n/raylib_jnk/scenes/digital_clock.jank) and
+[`tiled_drawing.jank`](https://github.com/b12n-oss/raylib-jank-demo/blob/main/tiled-drawing/src/net/b12n/raylib_jnk/scenes/tiled_drawing.jank) (parameter), [`input_mouse.jank`](https://github.com/b12n-oss/raylib-jank-demo/blob/main/input-mouse/src/net/b12n/raylib_jnk/scenes/input_mouse.jank) (`loop`/`recur` state).
 
 ## Getting a native value out anyway
 
@@ -44,7 +44,7 @@ heap-allocated. A `let`-local would be destroyed at end of scope.
                               (cpp/cast cpp/uint8_t 255))))
 ```
 
-`opaque_boxes.jank` (`bb opaque-boxes`) returns a `Color` from a fn, keeps
+[`opaque_boxes.jank`](https://github.com/b12n-oss/raylib-jank-demo/blob/main/opaque-boxes/src/net/b12n/raylib_jnk/scenes/opaque_boxes.jank) (`bb opaque-boxes` in raylib-jank-demo) returns a `Color` from a fn, keeps
 several in an immutable vector, and captures one in a closure.
 
 ## Writing to a native value
@@ -59,7 +59,7 @@ several in an immutable vector, and captures one in a closure.
 **`cpp/aset` does not exist**, though `cpp/aget` does. `clojure.core/aset`
 is the sugar, expanding to the second form. This repo used C shims for
 assignment far longer than it needed to for exactly that reason.
-Worked example: `models.jank`.
+Worked example: [`models.jank`](https://github.com/b12n-oss/raylib-jank-demo/blob/main/common/src/net/b12n/raylib_jnk/models.jank).
 
 ## The four faces of one boundary rule
 
@@ -82,8 +82,8 @@ Same rule each time, but the next one never looks like the last:
 6. **Pointers are values too.** A `float *`, `const char *` or `Model *`
    passed as a jank fn parameter arrives as an `object_ref`, and `cpp/aget`
    and `cpp/+` have no overload for that. Box the pointer, or keep the whole
-   loop in one fn. `spectrum_visualizer.jank` boxes its FFT arrays,
-   `text_3d_drawing.jank` its `const char *`, `decals.jank` its mesh arrays.
+   loop in one fn. [`spectrum_visualizer.jank`](https://github.com/b12n-oss/raylib-jank-demo/blob/main/spectrum-visualizer/src/net/b12n/raylib_jnk/scenes/spectrum_visualizer.jank) boxes its FFT arrays,
+   [`text_3d_drawing.jank`](https://github.com/b12n-oss/raylib-jank-demo/blob/main/text-3d-drawing/src/net/b12n/raylib_jnk/scenes/text_3d_drawing.jank) its `const char *`, [`decals.jank`](https://github.com/b12n-oss/raylib-jank-demo/blob/main/decals/src/net/b12n/raylib_jnk/scenes/decals.jank) its mesh arrays.
 
 ### The escape hatch: a macro is not a fn boundary
 
@@ -119,14 +119,14 @@ Corollary: a boxed copy **shares the pointer members** of the original.
 `Shader` is `{unsigned int id; int *locs;}`, `Model` holds
 `Material *materials`, so writing through the box reaches the caller's value.
 That is what makes one shared helper namespace viable instead of a shim per
-consumer (`shaders.jank`, `models.jank`, `rlights.jank`).
+consumer ([`shaders.jank`](https://github.com/b12n-oss/raylib-jank-demo/blob/main/common/src/net/b12n/raylib_jnk/shaders.jank), [`models.jank`](https://github.com/b12n-oss/raylib-jank-demo/blob/main/common/src/net/b12n/raylib_jnk/models.jank), [`rlights.jank`](https://github.com/b12n-oss/raylib-jank-demo/blob/main/common/src/net/b12n/raylib_jnk/rlights.jank)).
 
 ## Two limits that are not about lifetimes
 
 Neither follows from the boundary rule, but both surface while working around
 it, and both are compile-time errors with clear messages:
 
-- **A jank fn takes at most 10 parameters.** `text_3d_drawing.jank`'s glyph
+- **A jank fn takes at most 10 parameters.** [`text_3d_drawing.jank`](https://github.com/b12n-oss/raylib-jank-demo/blob/main/text-3d-drawing/src/net/b12n/raylib_jnk/scenes/text_3d_drawing.jank)'s glyph
   writer needed 11, so its position travels as an `[x y z]` vector.
 - **`loop`/`recur` slots are assigned in order, without temporaries.** An
   argument that reads a slot written earlier in the same `recur` sees the
@@ -156,7 +156,7 @@ that made it.
   (cpp/BeginTextureMode target) ...)
 ```
 
-`viewport_scaling.jank` is the proof, and recreation specifically was measured
+[`viewport_scaling.jank`](https://github.com/b12n-oss/raylib-jank-demo/blob/main/viewport-scaling/src/net/b12n/raylib_jnk/scenes/viewport_scaling.jank) is the proof, and recreation specifically was measured
 rather than assumed: with the resize forced on a timer, a 25s run logged **16
 framebuffer create/unload cycles and zero errors**. Creation, per-frame reads
 and mid-run reallocation all work.
@@ -191,6 +191,6 @@ keeps them native.
   (cpp/UnloadRenderTexture canvas))
 ```
 
-Two at once work (`camera_2d_split_screen.jank`). Blit a RenderTexture with a
-**negative source height**: they are stored upside down (`lines_drawing.jank`,
-`window_letterbox.jank`).
+Two at once work ([`camera_2d_split_screen.jank`](https://github.com/b12n-oss/raylib-jank-demo/blob/main/camera-2d-split-screen/src/net/b12n/raylib_jnk/scenes/camera_2d_split_screen.jank)). Blit a RenderTexture with a
+**negative source height**: they are stored upside down ([`lines_drawing.jank`](https://github.com/b12n-oss/raylib-jank-demo/blob/main/lines-drawing/src/net/b12n/raylib_jnk/scenes/lines_drawing.jank),
+[`window_letterbox.jank`](https://github.com/b12n-oss/raylib-jank-demo/blob/main/window-letterbox/src/net/b12n/raylib_jnk/scenes/window_letterbox.jank)).

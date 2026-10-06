@@ -9,25 +9,25 @@
 ## Filling the missing JVM surface
 
 No `Math/*`, `format`, `rand-int`, char literals, or `String` methods. The
-replacements, all proven in committed examples:
+replacements, all proven in the examples in raylib-jank-demo:
 
 | JVM habit | jank replacement | Proof |
 |---|---|---|
 | `Math/sin` etc. | `(:include "math.h")` + `cpp/sin`, `cpp/cos`, `cpp/atan2`, `cpp/sqrt`, `cpp/hypot`, `cpp/pow`, `cpp/ceil`, `cpp/floor`, `cpp/trunc`, `cpp/exp`, `cpp/log` (all double) | throughout |
-| `Math/PI` | `(def PI 3.141592653589793)` | `easings_testbed.jank` |
-| `rand-int` | `cpp/GetRandomValue` | `camera_2d.jank` |
-| `(format "%08d" n)` | a zero-pad `str` loop | `format_text.jank` |
-| `(format "%.2f" x)` | round ×100, split with `quot`/`mod` | `format_text.jank` `fmt2` |
-| char literals / `(char c)` | `subs` into an ASCII table string: chars 32..126 in order, `(subs ASCII (- c 32) (- c 31))` | `input_box.jank` |
-| `TextSubtext` | `subs` with the end clamped to `count` | `writing_anim.jank` |
-| string as tokens | vector of one-char strings via a `subs` loop | `penrose_tile.jank` |
+| `Math/PI` | `(def PI 3.141592653589793)` | [`easings_testbed.jank`](https://github.com/b12n-oss/raylib-jank-demo/blob/main/easings-testbed/src/net/b12n/raylib_jnk/scenes/easings_testbed.jank) |
+| `rand-int` | `cpp/GetRandomValue` | [`camera_2d.jank`](https://github.com/b12n-oss/raylib-jank-demo/blob/main/camera-2d/src/net/b12n/raylib_jnk/scenes/camera_2d.jank) |
+| `(format "%08d" n)` | a zero-pad `str` loop | [`format_text.jank`](https://github.com/b12n-oss/raylib-jank-demo/blob/main/format-text/src/net/b12n/raylib_jnk/scenes/format_text.jank) |
+| `(format "%.2f" x)` | round ×100, split with `quot`/`mod` | [`format_text.jank`](https://github.com/b12n-oss/raylib-jank-demo/blob/main/format-text/src/net/b12n/raylib_jnk/scenes/format_text.jank) `fmt2` |
+| char literals / `(char c)` | `subs` into an ASCII table string: chars 32..126 in order, `(subs ASCII (- c 32) (- c 31))` | [`input_box.jank`](https://github.com/b12n-oss/raylib-jank-demo/blob/main/input-box/src/net/b12n/raylib_jnk/scenes/input_box.jank) |
+| `TextSubtext` | `subs` with the end clamped to `count` | [`writing_anim.jank`](https://github.com/b12n-oss/raylib-jank-demo/blob/main/writing-anim/src/net/b12n/raylib_jnk/scenes/writing_anim.jank) |
+| string as tokens | vector of one-char strings via a `subs` loop | [`penrose_tile.jank`](https://github.com/b12n-oss/raylib-jank-demo/blob/main/penrose-tile/src/net/b12n/raylib_jnk/scenes/penrose_tile.jank) |
 
 Typed input: `(int (cpp/GetCharPressed))` in an inner loop until 0
-(`input_box.jank`). System time: `(cpp/time cpp/nullptr)`, `(cpp/& t)`,
-`(cpp/localtime ...)` + `.-tm_*` fields (`digital_clock.jank`).
+([`input_box.jank`](https://github.com/b12n-oss/raylib-jank-demo/blob/main/input-box/src/net/b12n/raylib_jnk/scenes/input_box.jank)). System time: `(cpp/time cpp/nullptr)`, `(cpp/& t)`,
+`(cpp/localtime ...)` + `.-tm_*` fields ([`digital_clock.jank`](https://github.com/b12n-oss/raylib-jank-demo/blob/main/digital-clock/src/net/b12n/raylib_jnk/scenes/digital_clock.jank)).
 
 **What IS available: the full clojure.core seq API and `clojure.string`.**
-The examples in this repo lean on index-based `loop`/`recur` + `nth`/`count`,
+The examples in raylib-jank-demo lean on index-based `loop`/`recur` + `nth`/`count`,
 which can read as if the higher-level collection API is missing. It is not.
 jank's `clojure/core.jank` defines and self-uses `first`, `rest`, `next`,
 `seq`, `empty?`, `second`, `map`, `filter`, `reduce`, `into`, `concat`,
@@ -39,20 +39,20 @@ ships too (`split`, `split-lines`, `join`, `includes?`, `index-of`,
 **Caveat: not every clojure.string / clojure.core fn is implemented yet.**
 The var exists (it's declared in `string.jank` / `core.jank`) but some native
 backers are stubs that throw at runtime: `str/replace` currently dies with
-`TODO: port clojure.string/replace` (hit in `rectangle_bounds.jank`, worked
+`TODO: port clojure.string/replace` (hit in [`rectangle_bounds.jank`](https://github.com/b12n-oss/raylib-jank-demo/blob/main/rectangle-bounds/src/net/b12n/raylib_jnk/scenes/rectangle_bounds.jank), worked
 around by baking the substitution into the source string), and core's
-`flush` dies with `TODO: port flesh` (sic; hit probing `compute_hash.jank`, where
+`flush` dies with `TODO: port flesh` (sic; hit probing [`compute_hash.jank`](https://github.com/b12n-oss/raylib-jank-demo/blob/main/compute-hash/src/net/b12n/raylib_jnk/scenes/compute_hash.jank), where
 stdout is block-buffered when redirected, so `println` output can vanish if
 the process is killed; there is no working in-jank flush, shim
 `fflush(stdout)` via `cpp/raw` if a probe needs it). So a function being
 present in the source is not proof it runs; if in doubt, probe it, or grep
 its native impl for `TODO`. `split`/`split-lines`/`join` are confirmed
-working, as are `peek`/`pop`/`filterv`/`into` (`rectangle_bounds.jank`).
+working, as are `peek`/`pop`/`filterv`/`into` ([`rectangle_bounds.jank`](https://github.com/b12n-oss/raylib-jank-demo/blob/main/rectangle-bounds/src/net/b12n/raylib_jnk/scenes/rectangle_bounds.jank)).
 Pull it in the normal way: `:require` coexists with a C++ `:include` in one
 `ns` form (jank's own `shell.jank` does exactly this):
 
 ```clojure
-(ns raylib-examples.foo
+(ns net.b12n.raylib-jnk.scenes.foo
   (:require [clojure.string :as str])
   (:include "raylib.h"))
 ;; then (str/split-lines text), (str/join " " xs), (first coll), etc.
@@ -60,7 +60,7 @@ Pull it in the normal way: `:require` coexists with a C++ `:include` in one
 
 Index-based loops are still fine (and sometimes clearer for tight draw
 loops), but reach for the seq API / `clojure.string` when it reads better.
-`text_file_loading.jank` is the proof in this repo: it `(:require
+[`text_file_loading.jank`](https://github.com/b12n-oss/raylib-jank-demo/blob/main/text-file-loading/src/net/b12n/raylib_jnk/scenes/text_file_loading.jank) is the proof in raylib-jank-demo: it `(:require
 [clojure.string :as str])` beside `(:include "raylib.h")` and word-wraps
 with `str/split-lines`, `str/split line #"\s+"` (regex literals work) and
 `filterv`, and it compiled and ran clean.
@@ -76,7 +76,7 @@ Source of truth: jank's own [`compiler+runtime/src/jank/clojure/`](https://githu
 (str "[" (cpp/GetMonitorName 0) "]")   ; => "[Built-in Retina Display]"
 ```
 
-Proven in `monitor_detector.jank`. No conversion helper needed: the native
+Proven in [`monitor_detector.jank`](https://github.com/b12n-oss/raylib-jank-demo/blob/main/monitor-detector/src/net/b12n/raylib_jnk/scenes/monitor_detector.jank). No conversion helper needed: the native
 `const char *` becomes a jank string at the `str` boundary. (You can also pass
 it straight to another C fn that wants `const char *`, e.g.
 `(cpp/DrawText (cpp/GetMonitorName 0) ...)`, since that's C->C.)
@@ -109,30 +109,30 @@ error line is generated-code position, not source, so don't trust it.
 - C constants resolve as `cpp/NAME`: colors, keys, `cpp/MOUSE_CURSOR_IBEAM`,
   `cpp/TEXTURE_FILTER_BILINEAR`, gesture enums (compare as ints:
   `(int (cpp/GetGestureDetected))`, values 1/2/4/.../512; see
-  `input_gestures.jank`).
+  [`input_gestures.jank`](https://github.com/b12n-oss/raylib-jank-demo/blob/main/input-gestures/src/net/b12n/raylib_jnk/scenes/input_gestures.jank)).
 - Flag ORs aren't needed: `SetConfigFlags` ORs each call into its state, so
-  call once per flag (`window_letterbox.jank`).
+  call once per flag ([`window_letterbox.jank`](https://github.com/b12n-oss/raylib-jank-demo/blob/main/window-letterbox/src/net/b12n/raylib_jnk/scenes/window_letterbox.jank)).
 - When camera rotation is 0, skip `GetWorldToScreen2D`/`GetScreenToWorld2D`
   (native Vector2 returns), since the transforms reduce to
   `screen = (world - target)*zoom + offset` in jank math
-  (`camera_2d_platformer.jank` does all five camera modes this way).
+  ([`camera_2d_platformer.jank`](https://github.com/b12n-oss/raylib-jank-demo/blob/main/camera-2d-platformer/src/net/b12n/raylib_jnk/scenes/camera_2d_platformer.jank) does all five camera modes this way).
   When rotation matters, both `GetScreenToWorld2D` and `GetWorldToScreen`
   (3D) DO work: bind the returned native Vector2 to a local and read
-  `.-x`/`.-y` (`camera_2d_mouse_zoom.jank`, `world_screen.jank`).
+  `.-x`/`.-y` ([`camera_2d_mouse_zoom.jank`](https://github.com/b12n-oss/raylib-jank-demo/blob/main/camera-2d-mouse-zoom/src/net/b12n/raylib_jnk/scenes/camera_2d_mouse_zoom.jank), [`world_screen.jank`](https://github.com/b12n-oss/raylib-jank-demo/blob/main/world-screen/src/net/b12n/raylib_jnk/scenes/world_screen.jank)).
 - **A jank fn takes at most 10 parameters** (`analyze/invalid-fn-parameters:
   This function has too many parameters. The max is 10`). Bundle extra args
-  into a vector and destructure inside; `tiled_drawing.jank`'s tiling helper
+  into a vector and destructure inside; [`tiled_drawing.jank`](https://github.com/b12n-oss/raylib-jank-demo/blob/main/tiled-drawing/src/net/b12n/raylib_jnk/scenes/tiled_drawing.jank)'s tiling helper
   passed source/dest as two 4-vectors instead of eight scalars. (Moot there
   in the end, since the native-`Texture2D`-param rule forced full inlining,
   but the cap is real and independent.)
 - A side-effecting draw-helper `defn` shared by several passes should end
-  with an explicit `nil` (`camera_2d_split_screen.jank`'s `draw-scene`).
-- `\n` inside a `DrawText` string works (`window_letterbox.jank`).
+  with an explicit `nil` ([`camera_2d_split_screen.jank`](https://github.com/b12n-oss/raylib-jank-demo/blob/main/camera-2d-split-screen/src/net/b12n/raylib_jnk/scenes/camera_2d_split_screen.jank)'s `draw-scene`).
+- `\n` inside a `DrawText` string works ([`window_letterbox.jank`](https://github.com/b12n-oss/raylib-jank-demo/blob/main/window-letterbox/src/net/b12n/raylib_jnk/scenes/window_letterbox.jank)).
 - Multi-header include: `(:include "raylib.h" "math.h" "time.h")`.
 
 ## Compile-time cost of deeply nested loops
 
-A triple-nested `doseq` with a fat body (`waving_cubes.jank`'s
+A triple-nested `doseq` with a fat body ([`waving_cubes.jank`](https://github.com/b12n-oss/raylib-jank-demo/blob/main/waving-cubes/src/net/b12n/raylib_jnk/scenes/waving_cubes.jank)'s
 15x15x15 cube lattice) compiles in ~3-4 MINUTES, versus ~30-60s for a
 typical example module. The generated C++ for nested seq iteration with
 a large inlined body appears to grow multiplicatively. Budget smoke-test

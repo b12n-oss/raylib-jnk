@@ -24,26 +24,35 @@ raylib
   https://github.com/raysan5/raylib
   Licensed under the zlib/libpng license.
 
-  raylib is not copied into this repository, and is no longer built here.
-  The library comes from org.jank-lang.commons/raylib-sys on Clojars, which
+  raylib is not copied into this repository, and is not built here. The
+  library comes from org.jank-lang.commons/raylib-sys on Clojars, which
   pins the same upstream commit (tag 6.0, dbc56a87).
 
-  A git submodule (jank-raylib-sys/raylib) is still fetched, but only as the
-  source of example ASSETS - the shaders, models, textures, fonts and audio
-  that 101 of the examples load from raylib/examples/*/resources/, which the
-  published jar does not carry. Nothing in it is compiled or patched.
+  This repo used to carry a git submodule (jank-raylib-sys/raylib) as the
+  source of example ASSETS: the shaders, models, textures, fonts and audio
+  that many examples load from raylib/examples/*/resources/. Nothing in it
+  was compiled or patched. It moved with the examples, see the note below.
+
+Moved to raylib-jank-demo
+-------------------------
+  On 2026-10-05 the example programs, the helper namespaces
+  (net.b12n.raylib-jnk.{models,shaders,rlights,rendertex}), the vendored
+  raylib asset submodule and the demo GIFs moved to
+  https://github.com/b12n-oss/raylib-jank-demo. The notices below still apply
+  to that material, and this repo's git history still holds every file. They
+  are kept here because the history is part of what this project distributes.
 
 raylib examples
 ---------------
   Copyright (c) 2013-2026 Ramon Santamaria (@raysan5) and contributors
   Licensed under the zlib/libpng license.
 
-  The example programs under raylib-examples/src/raylib_examples/ are ports
-  of raylib's own example programs to jank. They are altered versions: the
+  The example programs, formerly under raylib-examples/src/raylib_examples/,
+  are ports of raylib's own example programs to jank. They are altered versions: the
   logic is reimplemented in jank, and the interop constraints described in
   docs/guide/ forced structural changes throughout. Every example's docstring
   names the upstream C source it was ported from (e.g. core/core_basic_window,
-  shapes/shapes_bouncing_ball), and raylib-examples/README.md lists the same
+  shapes/shapes_bouncing_ball), and the README of the repo they moved to lists the same
   mapping in table form.
 
   One deliberate behavioural deviation from the originals, applied uniformly:
@@ -55,7 +64,9 @@ rlights.h
                           Ramon Santamaria (@raysan5)
   Licensed under the zlib/libpng license.
 
-  jank-raylib-sys/include/jank_rlights.h is an altered version of raylib's
+  jank-raylib-sys/include/jank_rlights.h, since replaced by the
+  net.b12n.raylib-jnk.rlights namespace in raylib-jank-demo, was an
+  altered version of raylib's
   examples/shaders/rlights.h. CreateLight and UpdateLightValues are kept
   verbatim from the original and marked static; the surrounding index-based
   scalar wrappers and per-type uniform setters are new work, needed because

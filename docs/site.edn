@@ -14,5 +14,4 @@
  :base-path   "/raylib-jnk"
 
  :title       "raylib-jnk"
- :description "209 official raylib examples ported to jank, a native Clojure dialect (C++/LLVM) rather than the JVM."
- :asset-dirs  ["demos"]}
+ :description "A guide to C and C++ interop in jank, a native Clojure dialect (C++/LLVM) rather than the JVM, from porting the official raylib examples."}

@@ -21,12 +21,12 @@ Address-of a **mutable let-local**, mirroring the C:
   (let [tex (cpp/LoadTextureFromImage img)] ...))        ; picks up the change
 ```
 
-`image_processing.jank` (nine filters). Nothing outside the example file
+[`image_processing.jank`](https://github.com/b12n-oss/raylib-jank-demo/blob/main/image-processing/src/net/b12n/raylib_jnk/scenes/image_processing.jank) (nine filters). Nothing outside the example file
 changes: every raylib fn is already callable through `(:include "raylib.h")`.
 
 A mutated `Image` is still a native value, so it cannot ride `loop`/`recur`.
 Keep build-mutate-read-unload inside one `let` and carry only the index
-(`image_processing.jank`).
+([`image_processing.jank`](https://github.com/b12n-oss/raylib-jank-demo/blob/main/image-processing/src/net/b12n/raylib_jnk/scenes/image_processing.jank)).
 
 ## `int *` out-params
 
@@ -39,7 +39,7 @@ Keep build-mutate-read-unload inside one `let` and carry only the index
   ...)
 ```
 
-`gif_player.jank`. `(+ 0.0 frames)` re-boxes before `(int …)`; a bare
+[`gif_player.jank`](https://github.com/b12n-oss/raylib-jank-demo/blob/main/gif-player/src/net/b12n/raylib_jnk/scenes/gif_player.jank). `(+ 0.0 frames)` re-boxes before `(int …)`; a bare
 `(int frames)` on the raw native value can trip codegen the same way an
 all-native `f64` chain does (see
 [`type-checking-and-coercion.md`](type-checking-and-coercion.md)).
@@ -56,13 +56,13 @@ into `unsigned char*` for byte math. `cpp/unsafe-cast` can:
            (cpp/int offset))))
 ```
 
-`gif_player.jank`. Keep `offset` a native int: `mod` and `rem` return reals
+[`gif_player.jank`](https://github.com/b12n-oss/raylib-jank-demo/blob/main/gif-player/src/net/b12n/raylib_jnk/scenes/gif_player.jank). Keep `offset` a native int: `mod` and `rem` return reals
 (`quot` returns integers).
 
 Same pair reaches native arrays. `cpp/MemAlloc` + `cpp/unsafe-cast` gives a
 `float*` that `cpp/aget` and `cpp/=` fill element-wise, which is how
-`image_kernel.jank` builds its convolution kernels and how
-`spectrum_visualizer.jank` holds its FFT buffers. `(cpp/new (:array T n))`
+[`image_kernel.jank`](https://github.com/b12n-oss/raylib-jank-demo/blob/main/image-kernel/src/net/b12n/raylib_jnk/scenes/image_kernel.jank) builds its convolution kernels and how
+[`spectrum_visualizer.jank`](https://github.com/b12n-oss/raylib-jank-demo/blob/main/spectrum-visualizer/src/net/b12n/raylib_jnk/scenes/spectrum_visualizer.jank) holds its FFT buffers. `(cpp/new (:array T n))`
 does not work; this is the way around it, and it costs ergonomics rather than
 capability.
 
@@ -79,14 +79,14 @@ inline as the argument and no staging buffer is needed:
                     cpp/SHADER_UNIFORM_VEC4)
 ```
 
-`shaders.jank` wraps that as `set-int!`, `set-float!`, `set-vec2!`/`3!`/`4!`
+[`shaders.jank`](https://github.com/b12n-oss/raylib-jank-demo/blob/main/common/src/net/b12n/raylib_jnk/shaders.jank) wraps that as `set-int!`, `set-float!`, `set-vec2!`/`3!`/`4!`
 and `set-shader-loc!`, taking a boxed `Shader`. Every shader example in the
 repo uses it; none carries a C setter.
 
 - **From a native struct**, read `.-x`/`.-y`/`.-z` and pass them
-  (`raymarching.jank`).
+  ([`raymarching.jank`](https://github.com/b12n-oss/raylib-jank-demo/blob/main/raymarching/src/net/b12n/raylib_jnk/scenes/raymarching.jank)).
 - **Array uniforms** (`SetShaderValueV`) fill a `cpp/MemAlloc` array
-  (`palette_switch.jank`).
+  ([`palette_switch.jank`](https://github.com/b12n-oss/raylib-jank-demo/blob/main/palette-switch/src/net/b12n/raylib_jnk/scenes/palette_switch.jank)).
 - `GetShaderLocation` returns a plain int; `(int (cpp/GetShaderLocation …))`
   boxes it. `LoadShader cpp/nullptr path` takes the default vertex shader.
 
@@ -110,8 +110,8 @@ are waiting on a feature, not on a workaround anyone has missed.
 
 This is the only remaining *limitation* reason any example here carries
 `cpp/raw`: 4 of the 6 blocks left in 217 sources. Of the other two,
-`screen_recording.jank` needs a preprocessor define (see the `:include`
-section below) and `point_rendering.jank` keeps its generator in C on
+[`screen_recording.jank`](https://github.com/b12n-oss/raylib-jank-demo/blob/main/screen-recording/src/net/b12n/raylib_jnk/scenes/screen_recording.jank) needs a preprocessor define (see the `:include`
+section below) and [`point_rendering.jank`](https://github.com/b12n-oss/raylib-jank-demo/blob/main/point-rendering/src/net/b12n/raylib_jnk/scenes/point_rendering.jank) keeps its generator in C on
 performance grounds, not because jank cannot express it.
 A callback defined inside a `cpp/raw` block is ordinary C, and a sibling
 wrapper attaches it:
@@ -121,16 +121,16 @@ static void jank_process_audio(void *buffer, unsigned int frames) { ... }
 static void jank_attach_processor(void) { AttachAudioMixedProcessor(jank_process_audio); }
 ```
 
-Four examples need it: `mixed_processor.jank`
-(`AttachAudioMixedProcessor`), `stream_effects.jank`
-(`AttachAudioStreamProcessor`), `stream_callback.jank`
-(`SetAudioStreamCallback`), and `custom_logging.jank`
+Four examples need it: [`mixed_processor.jank`](https://github.com/b12n-oss/raylib-jank-demo/blob/main/mixed-processor/src/net/b12n/raylib_jnk/scenes/mixed_processor.jank)
+(`AttachAudioMixedProcessor`), [`stream_effects.jank`](https://github.com/b12n-oss/raylib-jank-demo/blob/main/stream-effects/src/net/b12n/raylib_jnk/scenes/stream_effects.jank)
+(`AttachAudioStreamProcessor`), [`stream_callback.jank`](https://github.com/b12n-oss/raylib-jank-demo/blob/main/stream-callback/src/net/b12n/raylib_jnk/scenes/stream_callback.jank)
+(`SetAudioStreamCallback`), and [`custom_logging.jank`](https://github.com/b12n-oss/raylib-jank-demo/blob/main/custom-logging/src/net/b12n/raylib_jnk/scenes/custom_logging.jank)
 (`SetTraceLogCallback`, which is variadic as well, so it is blocked twice
 over). jank tunes parameters through setters and reads results through
 accessors, never touching the callback thread.
 
 **Being pushed from a callback is the blocker, not audio work.**
-`amp_envelope.jank` and `raw_stream.jank` do the same 4096-sample refill in
+[`amp_envelope.jank`](https://github.com/b12n-oss/raylib-jank-demo/blob/main/amp-envelope/src/net/b12n/raylib_jnk/scenes/amp_envelope.jank) and [`raw_stream.jank`](https://github.com/b12n-oss/raylib-jank-demo/blob/main/raw-stream/src/net/b12n/raylib_jnk/scenes/raw_stream.jank) do the same 4096-sample refill in
 pure jank because they pull from the main loop instead. Only the push
 direction needs C.
 
@@ -138,7 +138,7 @@ direction needs C.
 own `TraceLog` flushes; your replacement does not inherit that. stdout is
 fully buffered when redirected, so the headless smoke recipe (`> log 2>&1`)
 loses the whole buffer when `timeout` SIGTERM-kills the process: an empty log
-that looks like a broken port. `custom_logging.jank`'s first smoke returned
+that looks like a broken port. [`custom_logging.jank`](https://github.com/b12n-oss/raylib-jank-demo/blob/main/custom-logging/src/net/b12n/raylib_jnk/scenes/custom_logging.jank)'s first smoke returned
 zero lines; adding `fflush` surfaced all 42.
 
 ## Shared helpers are a jank namespace, not a C header
@@ -148,8 +148,8 @@ could neither take nor return a native value. Opaque boxes make that false.
 The header was only taking the address of a value (`cpp/new` does that) and
 holding structs (a jank map does that).
 
-`rlights.jank` is the result: no header, no `cpp/raw`, nothing to install.
-`shaders.jank` and `models.jank` cover shader uniforms and material binding
+[`rlights.jank`](https://github.com/b12n-oss/raylib-jank-demo/blob/main/common/src/net/b12n/raylib_jnk/rlights.jank) is the result: no header, no `cpp/raw`, nothing to install.
+[`shaders.jank`](https://github.com/b12n-oss/raylib-jank-demo/blob/main/common/src/net/b12n/raylib_jnk/shaders.jank) and [`models.jank`](https://github.com/b12n-oss/raylib-jank-demo/blob/main/common/src/net/b12n/raylib_jnk/models.jank) cover shader uniforms and material binding
 the same way. The boundary rules that shape these helpers, boxing, `cpp/=`,
 and why an accessor cannot be factored out as a fn (though a macro can), are in
 [`native-value-lifetimes.md`](native-value-lifetimes.md#the-four-faces-of-one-boundary-rule).
@@ -176,42 +176,43 @@ literal two-character prefix test in `clojure.core/include`, so it is exact:
 
 The fourth row is the trap: a relative path that goes *up* still needs the
 `./` in front of the `../`, which reads like a typo and is not. That is the
-form `embedded_files.jank` uses to pull in its two generated data headers,
+form [`embedded_files.jank`](https://github.com/b12n-oss/raylib-jank-demo/blob/main/embedded-files/src/net/b12n/raylib_jnk/scenes/embedded_files.jank) uses to pull in its two generated data headers,
 and it is why that example carries no `cpp/raw` at all.
 
 **A preprocessor define before an include still needs `cpp/raw`.** There is no
 `:define` clause, and an `ns` `:include` is always emitted ahead of any
 top-level form, so the define cannot be made to land first. The workaround
 keeps only the define in `cpp/raw` and pulls the header with a top-level
-`(include ...)` call - the same macro the `ns` clause expands to:
+`(include ...)` call - the same macro the `ns` clause expands to (the path is
+relative to the demo's directory in raylib-jank-demo):
 
 ```clojure
 (cpp/raw "#define MSF_GIF_IMPL")
 (include "./../jank-raylib-sys/raylib/examples/core/msf_gif.h")
 ```
 
-`screen_recording.jank` does exactly this for the single-header msf_gif
+[`screen_recording.jank`](https://github.com/b12n-oss/raylib-jank-demo/blob/main/screen-recording/src/net/b12n/raylib_jnk/scenes/screen_recording.jank) does exactly this for the single-header msf_gif
 encoder, which is the pattern for any `#define X_IMPLEMENTATION` library.
 
 ## Known-blocked constructs
 
 - **Native array indexing works** (2026-07-04). `(cpp/aget p (cpp/int i))`
-  on `unsigned int*` is proven in `compute_hash.jank` (matches the canonical
+  on `unsigned int*` is proven in [`compute_hash.jank`](https://github.com/b12n-oss/raylib-jank-demo/blob/main/compute-hash/src/net/b12n/raylib_jnk/scenes/compute_hash.jank) (matches the canonical
   CRC32/SHA1/SHA256 vectors; u32 boxes to jank ints without sign damage), and
-  on `int*` in `codepoints_loading.jank`. Struct arrays work too:
+  on `int*` in [`codepoints_loading.jank`](https://github.com/b12n-oss/raylib-jank-demo/blob/main/codepoints-loading/src/net/b12n/raylib_jnk/scenes/codepoints_loading.jank). Struct arrays work too:
   `(cpp/aget (.-glyphs font) (cpp/int i))` returns a `GlyphInfo` by value with
   working `.-value`/`.-advanceX` reads. Verified by probe, not yet
   load-bearing in a committed example, so keep the probe habit.
 - **Native arrays are built with `cpp/MemAlloc` + `cpp/unsafe-cast`**, not
-  `cpp/new`. `codepoints_loading.jank` fills an `int*` that way and hands it
+  `cpp/new`. [`codepoints_loading.jank`](https://github.com/b12n-oss/raylib-jank-demo/blob/main/codepoints-loading/src/net/b12n/raylib_jnk/scenes/codepoints_loading.jank) fills an `int*` that way and hands it
   to `LoadFontEx`; a `Vector2[]` works the same. Visual-equivalent
   workarounds still apply where they are simpler: per-segment `DrawLineEx`
-  (`math_sine_cosine.jank`) or recomputing vertices inline
-  (`triangle_strip.jank`).
+  ([`math_sine_cosine.jank`](https://github.com/b12n-oss/raylib-jank-demo/blob/main/math-sine-cosine/src/net/b12n/raylib_jnk/scenes/math_sine_cosine.jank)) or recomputing vertices inline
+  ([`triangle_strip.jank`](https://github.com/b12n-oss/raylib-jank-demo/blob/main/triangle-strip/src/net/b12n/raylib_jnk/scenes/triangle_strip.jank)).
 - **`Image` pixel manipulation and the `rlgl` API are NOT blocked.** The
   `raylib-sys` package ships `rlgl.h` next to `raylib.h` and the rlgl
   functions are compiled into `libraylib`, so `(:include "raylib.h" "rlgl.h")`
-  just works (`rlgl_triangle.jank`).
+  just works ([`rlgl_triangle.jank`](https://github.com/b12n-oss/raylib-jank-demo/blob/main/rlgl-triangle/src/net/b12n/raylib_jnk/scenes/rlgl_triangle.jank)).
 - **Mutable C string buffers** (`TextCopy` and friends) are the subject of
-  `strings_management.jank`, which keeps its C on those grounds rather than
+  [`strings_management.jank`](https://github.com/b12n-oss/raylib-jank-demo/blob/main/strings-management/src/net/b12n/raylib_jnk/scenes/strings_management.jank), which keeps its C on those grounds rather than
   simulating them.
