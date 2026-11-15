@@ -68,14 +68,14 @@ switch: `(if (>= segs min-segs) cpp/MAROON cpp/DARKGRAY)`.
 - Q quits (the repo-wide convention) UNLESS the example needs Q or types
   free text:
   - [`easings_testbed.jank`](https://github.com/b12n-oss/raylib-jank-demo/blob/main/easings-testbed/src/net/b12n/raylib_jnk/scenes/easings_testbed.jank) keeps the C's Q/W duration keys, so only ESC
-    quits there. Document that clearly in every registry surface.
+    quits there. Document that clearly in every registry listing.
   - [`input_box.jank`](https://github.com/b12n-oss/raylib-jank-demo/blob/main/input-box/src/net/b12n/raylib_jnk/scenes/input_box.jank) accepts typed characters, so it quits on Q only while
     the mouse is OUTSIDE the box.
 - Always list the full mapping in three places in raylib-jank-demo: the
   namespace docstring, the demo's `:controls` in `demos.edn`, and its own
-  `docs/guide/index.md`. Drift between such surfaces is a real failure mode:
+  `docs/guide/index.md`. Drift between these listings does happen:
   a code review once caught an easings-testbed listing that omitted the quit
-  key while another surface said "ESC quit".
+  key while another listing said "ESC quit".
 
 ## Porting checklist for a 🎛️ example
 
@@ -85,6 +85,6 @@ switch: `(if (>= segs min-segs) cpp/MAROON cpp/DARKGRAY)`.
 3. Keep the panel background/divider, replace controls with text lines.
 4. Preserve derived readouts (mode text, computed minimums) and their
    colors.
-5. Check Q is actually free before binding it to quit.
+5. Check Q is free before binding it to quit.
 6. Smoke-test, registering, committing per
    [porting-workflow.md](porting-workflow.md).

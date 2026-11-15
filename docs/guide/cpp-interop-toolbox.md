@@ -25,7 +25,7 @@ Address-of a **mutable let-local**, mirroring the C:
 changes: every raylib fn is already callable through `(:include "raylib.h")`.
 
 A mutated `Image` is still a native value, so it cannot ride `loop`/`recur`.
-Keep build-mutate-read-unload inside one `let` and carry only the index
+Keep build-mutate-read-unload inside one `let` and keep only the index
 ([`image_processing.jank`](https://github.com/b12n-oss/raylib-jank-demo/blob/main/image-processing/src/net/b12n/raylib_jnk/scenes/image_processing.jank)).
 
 ## `int *` out-params
@@ -106,13 +106,13 @@ jank's author has since confirmed this is a known gap with a planned shape:
 a separate `cpp/fn` special form for building C++ functions and closures,
 explicitly **not** support for passing vars or boxed jank fns
 ([issue #3](https://github.com/burinc/jank/issues/3)). So the four shims below
-are waiting on a feature, not on a workaround anyone has missed.
+are waiting on a feature, and nobody has overlooked a workaround.
 
-This is the only remaining *limitation* reason any example here carries
+This is the only remaining *limitation* reason any example here contains
 `cpp/raw`: 4 of the 6 blocks left in 217 sources. Of the other two,
 [`screen_recording.jank`](https://github.com/b12n-oss/raylib-jank-demo/blob/main/screen-recording/src/net/b12n/raylib_jnk/scenes/screen_recording.jank) needs a preprocessor define (see the `:include`
 section below) and [`point_rendering.jank`](https://github.com/b12n-oss/raylib-jank-demo/blob/main/point-rendering/src/net/b12n/raylib_jnk/scenes/point_rendering.jank) keeps its generator in C on
-performance grounds, not because jank cannot express it.
+performance grounds, though jank could express it.
 A callback defined inside a `cpp/raw` block is ordinary C, and a sibling
 wrapper attaches it:
 
@@ -129,7 +129,7 @@ Four examples need it: [`mixed_processor.jank`](https://github.com/b12n-oss/rayl
 over). jank tunes parameters through setters and reads results through
 accessors, never touching the callback thread.
 
-**Being pushed from a callback is the blocker, not audio work.**
+**Being pushed from a callback is the blocker.**
 [`amp_envelope.jank`](https://github.com/b12n-oss/raylib-jank-demo/blob/main/amp-envelope/src/net/b12n/raylib_jnk/scenes/amp_envelope.jank) and [`raw_stream.jank`](https://github.com/b12n-oss/raylib-jank-demo/blob/main/raw-stream/src/net/b12n/raylib_jnk/scenes/raw_stream.jank) do the same 4096-sample refill in
 pure jank because they pull from the main loop instead. Only the push
 direction needs C.
@@ -171,7 +171,7 @@ literal two-character prefix test in `clojure.core/include`, so it is exact:
 | `"raylib.h"` | `#include <raylib.h>` | yes, system/`-I` path |
 | `"inc/data.h"` | `#include <inc/data.h>` | **no** |
 | `"./inc/data.h"` | `#include "./inc/data.h"` | yes |
-| `"../up/data.h"` | `#include <../up/data.h>` | **no** - `../` is not `./` |
+| `"../up/data.h"` | `#include <../up/data.h>` | **no**: `../` is not `./` |
 | `"./../up/data.h"` | `#include "./../up/data.h"` | yes |
 
 The fourth row is the trap: a relative path that goes *up* still needs the
@@ -183,7 +183,7 @@ and it is why that example carries no `cpp/raw` at all.
 `:define` clause, and an `ns` `:include` is always emitted ahead of any
 top-level form, so the define cannot be made to land first. The workaround
 keeps only the define in `cpp/raw` and pulls the header with a top-level
-`(include ...)` call - the same macro the `ns` clause expands to (the path is
+`(include ...)` call, the same macro the `ns` clause expands to (the path is
 relative to the demo's directory in raylib-jank-demo):
 
 ```clojure
@@ -201,8 +201,8 @@ encoder, which is the pattern for any `#define X_IMPLEMENTATION` library.
   CRC32/SHA1/SHA256 vectors; u32 boxes to jank ints without sign damage), and
   on `int*` in [`codepoints_loading.jank`](https://github.com/b12n-oss/raylib-jank-demo/blob/main/codepoints-loading/src/net/b12n/raylib_jnk/scenes/codepoints_loading.jank). Struct arrays work too:
   `(cpp/aget (.-glyphs font) (cpp/int i))` returns a `GlyphInfo` by value with
-  working `.-value`/`.-advanceX` reads. Verified by probe, not yet
-  load-bearing in a committed example, so keep the probe habit.
+  working `.-value`/`.-advanceX` reads. Verified by probe but not yet
+  used in a committed example, so keep the probe habit.
 - **Native arrays are built with `cpp/MemAlloc` + `cpp/unsafe-cast`**, not
   `cpp/new`. [`codepoints_loading.jank`](https://github.com/b12n-oss/raylib-jank-demo/blob/main/codepoints-loading/src/net/b12n/raylib_jnk/scenes/codepoints_loading.jank) fills an `int*` that way and hands it
   to `LoadFontEx`; a `Vector2[]` works the same. Visual-equivalent

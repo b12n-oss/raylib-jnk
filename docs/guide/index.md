@@ -4,7 +4,7 @@ User-facing documentation for `raylib-jnk`: what came out of porting 212
 [raylib](https://github.com/raysan5/raylib) examples to
 **[jank](https://jank-lang.org)**, a native Clojure dialect (C++/LLVM), not the
 JVM. The examples live in [raylib-jank-demo](https://github.com/b12n-oss/raylib-jank-demo). Each page below covers one
-interop pattern or raylib API surface, citing the example file there that
+interop pattern or one part of the raylib API, citing the example file there that
 proves it.
 
 ## Why this exists
@@ -12,7 +12,7 @@ proves it.
 jank is young, and almost nothing has been written about using it against a
 real C library at this scale. Porting 212 raylib examples surfaced a set of
 interop rules that are not obvious from jank's own documentation and that
-cost real debugging time to find. Each page here is one of those rules,
+cost a lot of debugging time to find. Each page here is one of those rules,
 written up with the committed example that proves it, so the next person
 does not have to rediscover it by bisecting a failing draw loop.
 
@@ -30,44 +30,43 @@ It is the **native-Clojure sibling** of [`raylib-jlt`](https://github.com/jlt-co
 directly; what differs is the boundary each language draws between its own
 values and C's:
 
-> **jolt and JVM Clojure cross the FFI boundary at the *call*: an FFI call
+> jolt and JVM Clojure cross the FFI boundary at the *call*: an FFI call
 > marshals values in and out, but a raylib struct can otherwise live
 > anywhere a normal value lives. jank draws the boundary at the *value*
 > itself: a native C++ value (`Color`, `Vector2`, `Model`, ...) can be
 > constructed and used inline, but it cannot cross a jank *function*
 > boundary: not returned, not passed as a parameter, not carried through
-> `loop`/`recur`. Every pattern in this guide is a consequence of that one
-> rule.**
+> `loop`/`recur`. Every pattern in this guide follows from that rule.
 
 Four things follow from it:
 
-1. **The value can't leave the form that produced it**: construct inline,
+1. The value can't leave the form that produced it: construct inline,
    bind in an enclosing `let`, or hold frame-crossing mutable state as an
    opaque box in a jank atom.
    ([`native-value-lifetimes.md`](native-value-lifetimes.md))
-2. **The compiler enforces it at compile time, strictly**: `if`/`cond`
+2. The compiler enforces it at compile time, strictly: `if`/`cond`
    branch type-checking, numeric coercion between jank and native number
    types, and struct construction all have sharp, well-defined rules.
    ([`type-checking-and-coercion.md`](type-checking-and-coercion.md))
-3. **A C-interop toolbox reaches everything the rule seems to block**:
+3. A C-interop toolbox reaches everything the rule seems to block:
    pointer interop (`cpp/&`, `cpp/aget`, `cpp/unsafe-cast`), out-params,
-   native arrays, and shared jank helper namespaces. One genuine gap is
+   native arrays, and shared jank helper namespaces. One gap is
    left: a jank fn cannot become a C function pointer.
    ([`cpp-interop-toolbox.md`](cpp-interop-toolbox.md))
-4. **The full raylib surface is reachable despite the rule**: fonts,
+4. The full raylib API is reachable despite the rule: fonts,
    models and animations, audio, 3D mode, rlgl, and (platform-permitting)
    compute shaders all work, proven example by example.
    ([`raylib-api-coverage.md`](raylib-api-coverage.md))
 
 **Where that leaves the C.** 5 `cpp/raw` blocks remain across 214 sources,
 down from 78, and every example that can be ported has been. Four are blocked
-on one real gap (a jank fn cannot become a C function pointer); the fifth,
+on one gap (a jank fn cannot become a C function pointer); the fifth,
 `point_rendering`, keeps its C deliberately, because porting it would
 misrepresent the CPU-versus-GPU comparison the example exists to show.
 
 Nothing about jank's C++ interop is raylib-specific: `(:include "header.h")`
 and `cpp/` reach any C/C++ library. This repo just happens to exercise it
-against one real, struct-heavy graphics API across 212 examples.
+against one struct-heavy graphics API across 212 examples.
 
 ## Capability pages
 
@@ -84,7 +83,7 @@ against one real, struct-heavy graphics API across 212 examples.
 - [`cpp-interop-toolbox.md`](cpp-interop-toolbox.md): pointer interop
   (`cpp/&`, `cpp/aget`, `cpp/unsafe-cast`), `int *` out-params, native
   arrays, shared jank helper namespaces (`rlights`, `shaders`, `models`,
-  `rendertex`), and the one construct that is genuinely blocked.
+  `rendertex`), and the one construct that is blocked.
 - [`numeric-performance.md`](numeric-performance.md): why a hot loop written
   the ordinary way is ~70x off the same loop through `cpp/` operators, what
   that costs per iteration, and the two loop traps that come with the fix.
@@ -95,7 +94,7 @@ against one real, struct-heavy graphics API across 212 examples.
   animations, audio, 3D mode, rlgl + textures, and compute shaders (with
   the platform caveat; see the root README's Known limitations).
 - [`jvm-surface-gaps.md`](jvm-surface-gaps.md): what replaces the missing
-  JVM surface (`Math/*`, `format`, char literals), what's actually
+  JVM API (`Math/*`, `format`, char literals), what's
   available (`clojure.core`/`clojure.string`, with caveats), and a few
   gotchas that save a recompile.
 
@@ -115,8 +114,8 @@ against one real, struct-heavy graphics API across 212 examples.
 ## See also
 
 - [`raylib-jlt`](https://github.com/jlt-commons/raylib-jlt): the same
-  idea in Jolt (Chez Scheme) over `jolt.ffi`. Its FFI boundary is per-*call*,
-  not per-*value*: a `Camera3D` can live in an ordinary variable between FFI
+  idea in Jolt (Chez Scheme) over `jolt.ffi`. Its FFI boundary is per-*call*:
+  a `Camera3D` can live in an ordinary variable between FFI
   calls, unlike jank's native values.
 - [`raylib-clj`](https://github.com/b12n-oss/raylib-clj): JVM Clojure over
   `coffi`/Panama, with the same per-call boundary as Jolt, plus a garbage

@@ -28,27 +28,27 @@ Decomposed over 12000 iterations:
 
 Two intuitions this kills:
 
-- **It is not var lookup.** 809.6 against 809.1 is noise.
-- **It is not C++ interop.** A native array touch is the cheapest thing
-  measured, an order of magnitude below one boxed arithmetic operation.
-  Interop is the fast path, not the slow one.
+- Var lookup doesn't explain it: 809.6 against 809.1 is noise.
+- Neither does C++ interop. A native array touch is the cheapest thing
+  measured, an order of magnitude below one boxed arithmetic operation, so
+  interop is the fast path.
 
-It is boxing. An empty loop costs a fixed amount an iteration because
+The cost is boxing. An empty loop takes a fixed amount an iteration because
 `(inc i)` and `(< i n)` allocate.
 
 > **Re-measurement note (2026-08-25).** The ~810 ns figure in the table above
-> did not reproduce at the same `-O2` on either jank binary on this box - the
-> 2026-07-15 jank-0.1-alpha build or the Homebrew jank 0.1 release. An empty
+> did not reproduce at the same `-O2` on either jank binary on this box (the
+> 2026-07-15 jank-0.1-alpha build or the Homebrew jank 0.1 release). An empty
 > boxed `loop`/`recur` whose bound is a `def` var measures **37 ns** an
 > iteration over 100 x 12000 iterations on both, and **51 ns cold / 44 ns
-> warm** for a single 12000-iteration run - tens of ns, not hundreds. Our
+> warm** for a single 12000-iteration run: tens of ns, not hundreds. Our
 > own re-run of this probe on a later jank build, recorded in
 > [issue #4](https://github.com/burinc/jank/issues/4), reported 14.5 ns for
-> the same row - the same order of magnitude. The original harness could not
+> the same row, the same order of magnitude. The original harness could not
 > be reconstructed, so the table is left as recorded rather than silently
 > rewritten, but **treat the boxed floor as tens of ns an iteration**. The
 > `cpp/aget` and `cpp/cos` rows were not re-measured. The *shape* of the
-> finding - boxing dominates, interop is the fast path - is unchanged; only
+> finding (boxing dominates, interop is the fast path) is unchanged; only
 > the magnitude is smaller, which makes the "when it matters" thresholds
 > below conservative rather than wrong.
 
@@ -58,7 +58,7 @@ jank does support unboxed `loop` locals, and they are unboxed by
 **initialising them unboxed**: `(loop [i (cpp/int 0)] ...)`.
 
 The trap is that this buys nothing on its own. Unboxedness does not propagate
-through ordinary Clojure operators - `(inc i)` and `(< i n)` box an unboxed
+through ordinary Clojure operators: `(inc i)` and `(< i n)` box an unboxed
 local straight back up, so the loop costs what a fully boxed loop costs. Three
 1,000,000-iteration accumulator loops with the bound read from a `def` var, so
 the optimiser cannot fold them:
@@ -71,15 +71,14 @@ the optimiser cannot fold them:
 
 ns per iteration, on the 2026-07-15 alpha and the Homebrew 0.1 release.
 
-The middle row is the point: an unboxed init with boxed operators is a
-rounding error away from the fully boxed loop - on 0.1 it even measures
+In the middle row, an unboxed init with boxed operators lands a rounding
+error away from the fully boxed loop, and on 0.1 it even measures
 marginally faster, which is the same statement about noise. The third row
-cannot be quoted as a per-iteration cost at all: at `-O2` a genuinely
+cannot be quoted as a per-iteration cost at all: at `-O2` an
 unboxed loop is closed-formed away by the optimiser, which is itself the
 evidence that nothing in it allocates.
 
-**So the rule is not "unbox the init", it is "use `cpp/` operators
-throughout".** The recipe below already does this; the init is necessary but
+**The rule is to use `cpp/` operators throughout.** The recipe below already does this; the init is necessary but
 not sufficient.
 
 ## When it matters
@@ -133,7 +132,7 @@ Seen twice: a native `cpp/int` counter in [`spectrum_visualizer.jank`](https://g
 **boxed jank vector** accumulator in [`decals.jank`](https://github.com/b12n-oss/raylib-jank-demo/blob/main/decals/src/net/b12n/raylib_jnk/scenes/decals.jank), where an inner loop
 counted 3666 elements while the outer received 0. So it is not about native
 types. In both cases the inner loop **recurs**; an inner loop that returns
-without recurring has behaved correctly. Which of those is load-bearing is
+without recurring has behaved correctly. Which of those matters is
 not yet established.
 
 Silent either way: a wrong permutation still produced a spectrum that looked
@@ -147,7 +146,7 @@ reads a slot written earlier in the same `recur` sees the new value:
 ```
 
 Break the alias by binding first, or by forcing a copy with `(int x)`.
-[`unicode_ranges.jank`](https://github.com/b12n-oss/raylib-jank-demo/blob/main/unicode-ranges/src/net/b12n/raylib_jnk/scenes/unicode_ranges.jank) carries the fix.
+[`unicode_ranges.jank`](https://github.com/b12n-oss/raylib-jank-demo/blob/main/unicode-ranges/src/net/b12n/raylib_jnk/scenes/unicode_ranges.jank) has the fix.
 
 ## Related
 

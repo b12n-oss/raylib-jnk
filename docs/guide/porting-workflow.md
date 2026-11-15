@@ -2,7 +2,7 @@
 
 This guide is the end-to-end process for porting one official raylib example
 to jank, as practiced across the first 50 ports. Follow it top to bottom and
-a port lands as one self-contained, tested, registered commit.
+a port goes in as one self-contained, tested, registered commit.
 
 The ports themselves live in [raylib-jank-demo](https://github.com/b12n-oss/raylib-jank-demo), one Leiningen project
 per example, so the steps below run there. This repo keeps the process write-up
@@ -38,7 +38,7 @@ as a hint and check it against the C.
 
 Keep formulas and update ordering faithful to the C (a code review of the
 easings testbed verified all 28 easing formulas term-by-term against
-`reasings.h`; that fidelity is the standard). When jank forces a deviation
+`reasings.h`; hold new ports to that level). When jank forces a deviation
 (no mutable arrays, capped pool sizes, keyboard instead of raygui), say so in
 the namespace docstring:
 
@@ -107,7 +107,7 @@ clojure -M -e "
 ```
 
 `:total-forms N :ok` means balanced; `:ERROR Unmatched delimiter` means
-fix before compiling. (A strict `read` loop, not `read-string` - the
+fix before compiling. (A strict `read` loop, not `read-string`, since the
 single-form and `(do ...)`-wrapped variants both miss trailing
 imbalance.)
 

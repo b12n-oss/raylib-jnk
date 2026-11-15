@@ -40,8 +40,8 @@ operators rather than ordinary jank arithmetic, raylib API coverage notes and
 the porting workflow. Where a page cites an example, it links to the source in
 raylib-jank-demo.
 
-CI rebuilds the site on every pull request. Publishing from `main` is gated
-by the workflow, see `.github/workflows/site.yml`.
+CI rebuilds the site on every pull request. The workflow controls publishing from `main`;
+see `.github/workflows/site.yml`.
 
 ## Credits
 
