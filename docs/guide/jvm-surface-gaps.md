@@ -1,6 +1,6 @@
 # The missing JVM surface, and other odds and ends
 
-> jank's own surface is documented in the
+> jank's own API is documented in the
 > [jank book](https://book.jank-lang.org/); the authoritative list of what
 > exists is jank's
 > [`compiler+runtime/src/jank/clojure/`](https://github.com/jank-lang/jank/tree/main/compiler%2Bruntime/src/jank/clojure).
@@ -28,11 +28,11 @@ Typed input: `(int (cpp/GetCharPressed))` in an inner loop until 0
 
 **What IS available: the full clojure.core seq API and `clojure.string`.**
 The examples in raylib-jank-demo lean on index-based `loop`/`recur` + `nth`/`count`,
-which can read as if the higher-level collection API is missing. It is not.
+which can read as if the higher-level collection API is missing. It's there:
 jank's `clojure/core.jank` defines and self-uses `first`, `rest`, `next`,
 `seq`, `empty?`, `second`, `map`, `filter`, `reduce`, `into`, `concat`,
 `some`, `every?`, `mapv`, `range`, `repeat`, `partition`, `doseq`, `dotimes`,
-`when-let`/`if-let`, etc.: the ordinary Clojure surface. `clojure.string`
+`when-let`/`if-let`, etc.: the ordinary Clojure API. `clojure.string`
 ships too (`split`, `split-lines`, `join`, `includes?`, `index-of`,
 `trim`, `upper-case`/`lower-case`, ...), backed by native C++.
 
@@ -67,7 +67,7 @@ with `str/split-lines`, `str/split line #"\s+"` (regex literals work) and
 Source of truth: jank's own [`compiler+runtime/src/jank/clojure/`](https://github.com/jank-lang/jank/tree/main/compiler%2Bruntime/src/jank/clojure)
 (`core.jank`, `string.jank`): what is implemented there is what you can call.
 
-**`const char *` returns fold into `str` directly** (from the core arc,
+**`const char *` returns fold into `str` directly** (from the core examples,
 2026-07-03). A raylib fn that returns a C string (`GetMonitorName`,
 `GetClipboardText`, `GetWindowTitle`, ...) can be passed straight to jank's
 `str`, which turns it into a jank string:
@@ -82,7 +82,7 @@ it straight to another C fn that wants `const char *`, e.g.
 `(cpp/DrawText (cpp/GetMonitorName 0) ...)`, since that's C->C.)
 
 **GOTCHA: don't wrap an already-boxed jank int in `(int x)` INSIDE a `str`
-call.** `monitor_detector` cost real debugging over this. When `x` is already a
+call.** `monitor_detector` cost a lot of debugging over this. When `x` is already a
 jank int (e.g. destructured from a map), writing `(str "Position: " (int x))`
 made jank emit C++ that member-accesses an `i64`, and the WHOLE FILE failed to
 compile with the misleading `member reference base type 'i64' (aka 'long
@@ -124,7 +124,7 @@ error line is generated-code position, not source, so don't trust it.
   into a vector and destructure inside; [`tiled_drawing.jank`](https://github.com/b12n-oss/raylib-jank-demo/blob/main/tiled-drawing/src/net/b12n/raylib_jnk/scenes/tiled_drawing.jank)'s tiling helper
   passed source/dest as two 4-vectors instead of eight scalars. (Moot there
   in the end, since the native-`Texture2D`-param rule forced full inlining,
-  but the cap is real and independent.)
+  but the cap holds regardless.)
 - A side-effecting draw-helper `defn` shared by several passes should end
   with an explicit `nil` ([`camera_2d_split_screen.jank`](https://github.com/b12n-oss/raylib-jank-demo/blob/main/camera-2d-split-screen/src/net/b12n/raylib_jnk/scenes/camera_2d_split_screen.jank)'s `draw-scene`).
 - `\n` inside a `DrawText` string works ([`window_letterbox.jank`](https://github.com/b12n-oss/raylib-jank-demo/blob/main/window-letterbox/src/net/b12n/raylib_jnk/scenes/window_letterbox.jank)).
@@ -137,6 +137,6 @@ A triple-nested `doseq` with a fat body ([`waving_cubes.jank`](https://github.co
 typical example module. The generated C++ for nested seq iteration with
 a large inlined body appears to grow multiplicatively. Budget smoke-test
 alarms accordingly (the standard 40s alarm kills such a build
-mid-compile and looks like a hang - re-run with a 260s+ alarm before
+mid-compile and looks like a hang; re-run with a 260s+ alarm before
 diagnosing). If compile time matters more than faithfulness, hoist the
 inner body into a `defn` taking only jank values.

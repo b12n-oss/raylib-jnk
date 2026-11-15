@@ -1,6 +1,6 @@
 # Native value lifetimes
 
-> **The semantics live in the jank book**, not here:
+> The semantics live in the jank book:
 > [Working with native values](https://book.jank-lang.org/cpp-interop/native-values.html)
 > and [Casting between native types](https://book.jank-lang.org/cpp-interop/cast.html).
 > This page records only what 212 ported examples taught us on top of it,
@@ -87,8 +87,8 @@ Same rule each time, but the next one never looks like the last:
 
 ### The escape hatch: a macro is not a fn boundary
 
-Every face above is about a **fn** boundary. A macro has none - it expands at
-the call site, where the value is still native - so the two "cannot be
+Every face above is about a **fn** boundary. A macro has none, because it
+expands at the call site, where the value is still native. So the two "cannot be
 factored out" faces can be factored out after all, just not as `defn`:
 
 ```clojure
@@ -103,17 +103,16 @@ Both round-trip correctly (verified on the 2026-07-15 jank-0.1-alpha build
 and the Homebrew jank 0.1 release), and it is what jank's author suggests for
 face 2 in [issue #15](https://github.com/burinc/jank/issues/15).
 
-**One gotcha, and it is not obvious.** A member-access symbol has to be
+**One gotcha:** a member-access symbol has to be
 unquote-quoted as `~'.-tv_sec`. Plain syntax quote namespace-qualifies it into
 `your-ns/.-tv_sec` and the macro dies with `Unable to resolve symbol`, which
 reads like the macro approach itself failed rather than a quoting slip. The
 `cpp/`-prefixed symbols in face 2 are already qualified, so they need no such
-care - which is exactly why face 3 is the one that trips you.
+care, which is exactly why face 3 is the one that trips you.
 
-This is a real option, not a recommendation to go rewrite working code: an
-inline `cpp/aget` is clearer than a macro that hides one. Reach for the macro
-when the same boxing or accessor is repeated enough that the duplication is
-the bigger cost.
+This is an option, and an inline `cpp/aget` is often clearer than a macro that
+hides one, so leave working code alone. Reach for the macro when the same
+boxing or accessor repeats enough that the duplication costs more.
 
 Corollary: a boxed copy **shares the pointer members** of the original.
 `Shader` is `{unsigned int id; int *locs;}`, `Model` holds
@@ -136,11 +135,11 @@ it, and both are compile-time errors with clear messages:
 ## Frame-crossing mutable native state
 
 When a native resource must persist across frames AND be recreated at runtime
-with computed sizes, neither usual home works: `loop`/`recur` cannot carry a
+with computed sizes, neither usual home works: `loop`/`recur` cannot hold a
 native value, and a create-once outer-`let` local cannot be rebound.
 
 **Hold an opaque box in a jank atom.** The box is an ordinary jank object, so
-the atom carries it freely; `cpp/new` keeps the value alive past the scope
+the atom can hold it freely; `cpp/new` keeps the value alive past the scope
 that made it.
 
 ```clojure
@@ -166,7 +165,7 @@ and mid-run reallocation all work.
 Earlier ports parked such values in a `cpp/raw` static behind accessor fns.
 Every one of those has since been replaced by a box; only the four
 callback-blocked examples still hold C state at all. Prefer the box. The
-static carries a trap that cost real debugging time.
+static comes with a trap that cost a lot of debugging time.
 
 **`cpp/raw` statics are duplicated PER JANK FN.** Every jank fn referencing
 the shims gets its OWN copy. A helper fn writing the "same" static writes a

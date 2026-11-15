@@ -3,7 +3,7 @@
 > **Cast and type semantics live in the jank book**:
 > [Casting between native types](https://book.jank-lang.org/cpp-interop/cast.html)
 > and [Working with native types](https://book.jank-lang.org/cpp-interop/native-types.html).
-> Below are the coercion traps 212 raylib ports actually hit, each naming
+> Below are the coercion traps 212 raylib ports hit, each naming
 > the example that proves it.
 
 ## if/cond branch type-checking
@@ -13,7 +13,7 @@ common type, or a trait conversion. There is no universal base class in the
 native world the way `Object` is on the JVM, so two unrelated native types
 have nothing to unify to.
 
-**`if` itself is not the problem - the implicit `nil` branch is.** A
+**Only the implicit `nil` branch causes the mismatch.** A
 two-branch `if` whose arms are both the same native type works, including for
 a struct with no trait conversion:
 
@@ -28,8 +28,7 @@ value: `(if on-text? cpp/RED cpp/DARKGRAY)` as a call argument is fine
 ([`input_box.jank`](https://github.com/b12n-oss/raylib-jank-demo/blob/main/input-box/src/net/b12n/raylib_jnk/scenes/input_box.jank), [`bullet_hell.jank`](https://github.com/b12n-oss/raylib-jank-demo/blob/main/bullet-hell/src/net/b12n/raylib_jnk/scenes/bullet_hell.jank)).
 
 **`cond` cannot yield a non-convertible native value even with `:else`.**
-This is worth stating because `:else` looks like it should close the gap. It
-does not: `(cond a x :else y)` expands to `(if a x (if :else y nil))`, so the
+`:else` looks like it should close the gap, but `(cond a x :else y)` expands to `(if a x (if :else y nil))`, so the
 trailing `nil` survives and the same mismatch fires. Verified against a
 `cpp/timespec` on both the 2026-07-15 jank-0.1-alpha build and the Homebrew
 jank 0.1 release. `case` has the same shape.

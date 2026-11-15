@@ -1,6 +1,6 @@
 # raylib API coverage
 
-What raylib surface area is proven working against this port, and how.
+Which parts of the raylib API are proven working against this port, and how.
 Each section cites the example in [raylib-jank-demo](https://github.com/b12n-oss/raylib-jank-demo) that proves it; these examples
 double as the running test suite for the claims below.
 
@@ -100,7 +100,7 @@ Prerequisites and patterns:
   `rlRotatef`/`rlTranslatef`/`rlScalef` nest hierarchical transforms
   inside `BeginMode3D`, and regular raylib draws (`DrawSphere`) render
   through the same batch so the stack applies to them
-  ([`rlgl_solar_system.jank`](https://github.com/b12n-oss/raylib-jank-demo/blob/main/rlgl-solar-system/src/net/b12n/raylib_jnk/scenes/rlgl_solar_system.jank) - Sun/Earth/Moon).
+  ([`rlgl_solar_system.jank`](https://github.com/b12n-oss/raylib-jank-demo/blob/main/rlgl-solar-system/src/net/b12n/raylib_jnk/scenes/rlgl_solar_system.jank), Sun/Earth/Moon).
 - **Color field read-back works**: bind a returned Color to a let-local and
   read `(.-r c)`/`(.-g c)`/`(.-b c)`/`(.-a c)`, then feed them native-to-native
   into `rlColor4ub`, or box with `(int (+ 0.0 ...))` to store as jank ints
@@ -143,8 +143,8 @@ successfully` are the proof lines to grep for. OGG decoding works too
 `SetMusicPan`/`SetMusicVolume` (jank real through `cpp/float`), and
 `GetMusicTimePlayed`/`GetMusicTimeLength` boxed at the binding site
 ([`music_stream.jank`](https://github.com/b12n-oss/raylib-jank-demo/blob/main/music-stream/src/net/b12n/raylib_jnk/scenes/music_stream.jank); proof line `STREAM: Initialized successfully`).
-The remaining audio surface to probe is the callback-taking APIs
-(`SetAudioStreamCallback`, audio processors), likely a real blocker,
+The remaining audio area to probe is the callback-taking APIs
+(`SetAudioStreamCallback`, audio processors), likely a blocker,
 same class as C function pointers elsewhere.
 
 ## 3D mode (from the sound-positioning port, 2026-07-03)

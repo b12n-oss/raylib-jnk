@@ -101,7 +101,7 @@ one machine it hit 8 of 209: `basic-shapes`, `top-down-lights` and
 changed), `math-sine-cosine` (`DrawLineDashed`), `compute-hash`
 (`ComputeSHA256`), `strings-management`, `font-sdf` (`LoadFontData`), and
 `point-rendering` (`rlDisablePointMode`). The other 201 compiled fine with
-the same stray header present, which makes this very easy to misdiagnose as
+the same stray header present, which makes this easy to misdiagnose as
 a bug in one example.
 
 Verified as a closed loop on jank `0.1-alpha` against Homebrew raylib 5.5:
