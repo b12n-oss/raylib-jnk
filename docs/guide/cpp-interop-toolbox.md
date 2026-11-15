@@ -80,8 +80,9 @@ inline as the argument and no staging buffer is needed:
 ```
 
 [`shaders.jank`](https://github.com/b12n-oss/raylib-jank-demo/blob/main/common/src/net/b12n/raylib_jnk/shaders.jank) wraps that as `set-int!`, `set-float!`, `set-vec2!`/`3!`/`4!`
-and `set-shader-loc!`, taking a boxed `Shader`. Every shader example in the
-repo uses it; none carries a C setter.
+and `set-shader-loc!`, taking a boxed `Shader`. Shader examples either use it or
+call `cpp/SetShaderValue` directly with the same inline construction, and none
+carries a C setter.
 
 - **From a native struct**, read `.-x`/`.-y`/`.-z` and pass them
   ([`raymarching.jank`](https://github.com/b12n-oss/raylib-jank-demo/blob/main/raymarching/src/net/b12n/raylib_jnk/scenes/raymarching.jank)).

@@ -67,8 +67,8 @@ Every example sets `(cpp/SetConfigFlags cpp/FLAG_WINDOW_HIGHDPI)` before
 `InitWindow` so windows scale with the monitor DPI (drawing stays at the
 C's logical resolution); include it in new ports. `SetConfigFlags` ORs
 each call into its state, so it stacks with `FLAG_MSAA_4X_HINT` etc.
-Exceptions: `window-flags` (a flag-state demo) and the two `highdpi-*`
-examples (which manage DPI flags themselves).
+The exception is `window-flags` (a flag-state demo); the two `highdpi-*`
+examples set it too.
 
 ## 3. Register the example (same commit)
 

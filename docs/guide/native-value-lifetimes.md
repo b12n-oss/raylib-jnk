@@ -164,7 +164,7 @@ and mid-run reallocation all work.
 
 Earlier ports parked such values in a `cpp/raw` static behind accessor fns.
 Every one of those has since been replaced by a box; only the four
-callback-blocked examples still hold C state at all. Prefer the box. The
+callback-blocked examples and `point_rendering` still hold C state at all. Prefer the box. The
 static comes with a trap that cost a lot of debugging time.
 
 **`cpp/raw` statics are duplicated PER JANK FN.** Every jank fn referencing
